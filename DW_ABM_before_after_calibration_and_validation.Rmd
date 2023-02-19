@@ -1,0 +1,1055 @@
+---
+title: "**REPRODUCIBLE RESULTS. Modeling spatiotemporal domestic wastewater variability**"  
+subtitle: "**Implications to measure sanitation efficiency**"
+author:
+  - name: "*Néstor DelaPaz-Ruíz, Ellen-Wien Augustijn, Mahdi Farnaghi, Raul Zurita-Milla*"
+    affiliation: Department of Geo-Information Process (GIP),  Faculty of Geo-Information Science and Earth Observation (ITC),  University of Twente,  Drienerlolaan 5, 7522 NB Enschede, The Netherlands
+
+date: "2022-09-16"
+output:
+  html_document:
+    toc: true
+  
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, warning = FALSE, message = FALSE)
+
+#Loading any pre-requirements
+#Libraries 
+library(knitr)
+library(ggplot2)
+library(dplyr)
+library(reshape2)
+library(tidyr)
+library(purrr)
+library(Rcpp)
+
+#Setup code required
+ver.tim <- 0
+ 
+  source("code/dw.abm.events.into.r.cal.val.1.r")
+  source("code/dw.abm.events.into.r.no.cal.r")
+  source("code/dw.abm.validation.snt.before.after.cal.R")
+
+```
+
+
+# Model calibration and results of domestic wastewater (DW) variability
+
+# 1. Introduction
+
+This is the documentation to reproduce the sections of calibration and results of the figures 5 and 6.
+
+## 1.1 Problem statement for DW ABM calibration and evaluation
+
+Calibration: The DW ABM model requires suitable input values that produce representative simulated outputs, which are undefined.
+
+Results: The calibrated DW ABM is representative not only for the calibrated day, but also for the evaluation day.
+
+## 1.2 Objective
+
+Calibration: Define calibrated input values that provide simulated results representative of the observed data based on a day of sampled DW pollutants.
+
+Evaluation: Prove that the calibrated DW ABM can reproduce the DW variability of a day outside of the calibration period.
+
+# 2. Domestic wastewater variability: Time series and correlations
+
+## 2.1 Instructions 
+
+Before starting, make sure the files that end with `.snt.cal1.csv` exist with `size= 0B` in the path: `"results/calibration.snt/"`. You can assist yourself executing the following code in Git Bash:
+
+```{bash, crete.txt, echo=T, eval=F}
+. ./code/newfiles.txt
+```
+
+1) Open the Netlogo files: `dw.sms.abm.snt.2020.cal.val.1.nlogo` & `dw.sms.abm.snt.2020.no.cal.val.1.nlogo`
+2) For each Netlogo file press `ctrl+shift+B` to open the Behavior space menu.
+3) Select and run the experiment: `cal.val.1 (50 runs)` and wait until the simulation concludes.
+4) Execute the below code chucks to obtain the results of the calibration and evaluation based on DW variability analysis.
+
+## 2.2 Results
+
+### 2.2.1 Calibration
+
+Matching simulated and observed DW variability from the WWTP: COD and TSS at multiple time resolutions.
+
+#### **Figure 5.a: Model not calibrated**
+
+Results before calibrating inputs values.
+
+```{r no.cal.plot.cod.cal, echo=FALSE}
+val.days.snt <- c("2022-03-22") #Calibration day
+
+#COD WWTP
+dwts.dygraph.manhole.cod <- function(
+    data,mh.id,tem.res,t.date, poll.sim, poll.obs, poll.sim.ch, poll.obs.ch){
+  
+  data %>%
+    filter(manhole.id == 'wwtp')%>%
+    select(date.time, manhole.id, 
+           {{poll.sim}}, {{poll.obs}},
+           cod.mn,cod.mx)%>%
+    filter(str_detect(date.time,t.date))%>%
+    pivot_wider(names_from = manhole.id,
+                values_from = c({{poll.sim.ch}},{{poll.obs.ch}},
+                                cod.mx,cod.mn))%>%
+    xts(.,.$date.time)%>%
+    dygraph(main = paste (mh.id,
+                          tem.res,#wday(t.date,label = TRUE,abbr = TRUE),
+                          sep=" - "), #group = t.date,
+            width = 400, 
+            height = 300)%>% #dyRangeSelector(dateWindow = c("2022-03-22 05:00:00", "2022-03-22 18:00:00"))%>%
+    dyOptions(drawPoints = TRUE, useDataTimezone = TRUE,
+              pointSize = 1.5)%>%
+    dyAxis("y", label = "COD (mg/l)", valueRange = c(-100, 4000)) %>%
+    dyAxis("x", label = "Time (hrs)") %>% #, valueRange = c("2022-03-22 07:00:00", "2022-03-22 16:00:00")
+    dySeries(c("cod.mn_wwtp","cod.mgl_wwtp","cod.mx_wwtp"), label = "Simulated",color = "#543005")%>%
+    dySeries("ob.cod.mgl_wwtp", label = "Observed",color = "#003c30")%>%
+    dySeries("date.time", label = " ",color = "white")%>%
+    dyLegend(show = "always",
+             hideOnMouseOut = FALSE) -> dwplot
+
+    htmltools::tags$div(dwplot, 
+                        style = 
+                        "padding:5px; 
+                        width: 450px;
+                        display:inline-block;")
+}
+ 
+#TSS WWTP
+dwts.dygraph.manhole.tss <- function(
+    data,mh.id,tem.res,t.date, poll.sim, poll.obs, poll.sim.ch, poll.obs.ch){
+
+  data %>%
+    filter(manhole.id == 'wwtp')%>%
+    select(date.time, manhole.id,
+           {{poll.sim}}, {{poll.obs}},
+           tss.mn,tss.mx)%>%
+    filter(str_detect(date.time,t.date))%>%
+    pivot_wider(names_from = manhole.id,
+                values_from = c({{poll.sim.ch}},{{poll.obs.ch}},
+                                tss.mx,tss.mn))%>%
+    xts(.,.$date.time)%>%
+    dygraph(main = paste (mh.id,#wday(t.date,label = TRUE,abbr = TRUE),
+                          tem.res,
+                          sep=" - "),#group = t.date,
+            width = 400, 
+            height = 300)%>%
+    dyOptions(drawPoints = TRUE, useDataTimezone = TRUE,
+              pointSize = 1.5)%>%
+    dyAxis("y", label = "TSS in mg/l", valueRange = c(-100, 4000)) %>%
+    dyAxis("x", label = "Time (hrs)") %>%
+    dySeries(c("tss.mn_wwtp","tss.mgl_wwtp","tss.mx_wwtp"), label = "Simulated", color = "#7f3b08")%>%
+    dySeries("ob.tss.mgl_wwtp", label = "Observed", color = "#2d004b")%>%
+    dySeries("date.time", label = " ",color = "white")%>%
+    dyLegend(show = "always", hideOnMouseOut = FALSE)  -> dwplot
+  
+  htmltools::tags$div(dwplot, 
+                        style = 
+                        "padding:5px; 
+                        width: 450px;
+                        display:inline-block;")
+}
+
+#COD 60 min
+val.days.snt %>%
+  map(dwts.dygraph.manhole.cod,
+      data = no.cal.obs.sim.stn.60min,
+      mh.id = 'WWTP',
+      tem.res = '60 min',
+      poll.sim = cod.mgl,
+      poll.obs = ob.cod.mgl,
+      poll.sim.ch = 'cod.mgl',
+      poll.obs.ch= 'ob.cod.mgl')%>%
+  as.list() -> dwplot.list.2.mh
+
+# #COD 30 min
+# val.days.snt %>%
+#   map(dwts.dygraph.manhole.cod,
+#       data = no.cal.obs.sim.stn.30min,
+#       mh.id = 'WWTP',
+#       tem.res = '30 min',
+#       poll.sim = cod.mgl,
+#       poll.obs = ob.cod.mgl,
+#       poll.sim.ch = 'cod.mgl',
+#       poll.obs.ch= 'ob.cod.mgl')%>%
+#   as.list() -> dwplot.list.3.mh
+# 
+# #COD 12 min
+# val.days.snt %>%
+#   map(dwts.dygraph.manhole.cod,
+#       data = no.cal.obs.sim.stn.12min,
+#       mh.id = 'WWTP',
+#       tem.res = '12 min',
+#       poll.sim = cod.mgl,
+#       poll.obs = ob.cod.mgl,
+#       poll.sim.ch = 'cod.mgl',
+#       poll.obs.ch= 'ob.cod.mgl')%>%
+#   as.list() -> dwplot.list.4.mh
+
+#TSS 60 min
+val.days.snt %>%
+  map(dwts.dygraph.manhole.tss,
+      data = no.cal.obs.sim.stn.60min,
+      mh.id = 'WWTP',
+      tem.res = '60 min',
+      poll.sim = tss.mgl,
+      poll.obs = ob.tss.mgl,
+      poll.sim.ch = 'tss.mgl',
+      poll.obs.ch= 'ob.tss.mgl')%>%
+  as.list() -> dwplot.list.7.mh
+
+# #TSS 30 min
+# val.days.snt %>%
+#   map(dwts.dygraph.manhole.tss,
+#       data = no.cal.obs.sim.stn.30min,
+#       mh.id = 'WWTP',
+#       tem.res = '30 min',
+#       poll.sim = tss.mgl,
+#       poll.obs = ob.tss.mgl,
+#       poll.sim.ch = 'tss.mgl',
+#       poll.obs.ch= 'ob.tss.mgl')%>%
+#   as.list() -> dwplot.list.8.mh
+# 
+# #TSS 12 min
+# val.days.snt %>%
+#   map(dwts.dygraph.manhole.tss,
+#       data = no.cal.obs.sim.stn.12min,
+#       mh.id = 'WWTP',
+#       tem.res = '12 min',
+#       poll.sim = tss.mgl,
+#       poll.obs = ob.tss.mgl,
+#       poll.sim.ch = 'tss.mgl',
+#       poll.obs.ch= 'ob.tss.mgl')%>%
+#   as.list() -> dwplot.list.9.mh
+
+htmltools::browsable(htmltools::tagList(dwplot.list.2.mh,dwplot.list.7.mh))
+
+
+                                        # ,dwplot.list.3.mh,dwplot.list.8.mh,
+                                        # dwplot.list.4.mh,dwplot.list.9.mh
+
+```
+
+
+```{r no.cal.r.cod.cal, echo=FALSE}
+#Correlations for calibration
+no.cal.tbl.sim.corr.cal.T(paste('corr.tbl.cal.d0',{{ver.tim}}))%>%
+  filter(
+    Parameter2 == 'cod.mgl',
+    manhole.id == 'wwtp',
+         res.min	 == 60) %>%
+  select(res.min,manhole.id,Parameter1,Parameter2,r.cal.T,p,n_Obs) %>%
+  rename(., r.correlation = r.cal.T, 
+         WWTP_Catchment = manhole.id)%>%
+  kable()
+ 
+# |
+#            res.min	 == 30 |
+#            res.min	 == 12
+
+```
+
+```{r no.cal.r.tss.cal, echo=FALSE}
+#Correlations for calibration 
+no.cal.tbl.sim.corr.cal.T(paste('corr.tbl.cal.d0',{{ver.tim}}))%>%
+  filter(
+    Parameter2 == 'tss.mgl',
+    manhole.id == 'wwtp',
+         res.min	 == 60) %>%
+  select(res.min,manhole.id,Parameter1,Parameter2,r.cal.T,p,n_Obs) %>%
+  rename(., r.correlation = r.cal.T, 
+         WWTP_Catchment = manhole.id)%>%
+  kable()
+
+ # |
+ #           res.min	 == 30 |
+ #           res.min	 == 12
+```
+
+#### **Figure 5.b: Model calibrated**
+
+Results after calibrating inputs values.
+
+```{r plot.cod.cal, echo=FALSE}
+val.days.snt <- c("2022-03-22") #Calibration day
+
+#COD WWTP
+dwts.dygraph.manhole.cod <- function(
+    data,mh.id,tem.res,t.date, poll.sim, poll.obs, poll.sim.ch, poll.obs.ch){
+  
+  data %>%
+    filter(manhole.id == 'wwtp')%>%
+    select(date.time, manhole.id, 
+           {{poll.sim}}, {{poll.obs}},
+           cod.mn,cod.mx)%>%
+    filter(str_detect(date.time,t.date))%>%
+    pivot_wider(names_from = manhole.id,
+                values_from = c({{poll.sim.ch}},{{poll.obs.ch}},
+                                cod.mx,cod.mn))%>%
+    xts(.,.$date.time)%>%
+    dygraph(main = paste (mh.id,
+                          tem.res,#wday(t.date,label = TRUE,abbr = TRUE),
+                          sep=" - "), #group = t.date,
+            width = 400, 
+            height = 300)%>% #dyRangeSelector(dateWindow = c("2022-03-22 05:00:00", "2022-03-22 18:00:00"))%>%
+    dyOptions(drawPoints = TRUE, useDataTimezone = TRUE,
+              pointSize = 1.5)%>%
+    dyAxis("y", label = "COD (mg/l)", valueRange = c(-100, 4000)) %>%
+    dyAxis("x", label = "Time (hrs)") %>% #, valueRange = c("2022-03-22 07:00:00", "2022-03-22 16:00:00")
+    dySeries(c("cod.mn_wwtp","cod.mgl_wwtp","cod.mx_wwtp"), label = "Simulated",color = "#543005")%>%
+    dySeries("ob.cod.mgl_wwtp", label = "Observed",color = "#003c30")%>%
+    dySeries("date.time", label = " ",color = "white")%>%
+    dyLegend(show = "always",
+             hideOnMouseOut = FALSE) -> dwplot
+
+    htmltools::tags$div(dwplot, 
+                        style = 
+                        "padding:5px; 
+                        width: 450px;
+                        display:inline-block;")
+}
+ 
+#TSS WWTP
+dwts.dygraph.manhole.tss <- function(
+    data,mh.id,tem.res,t.date, poll.sim, poll.obs, poll.sim.ch, poll.obs.ch){
+
+  data %>%
+    filter(manhole.id == 'wwtp')%>%
+    select(date.time, manhole.id,
+           {{poll.sim}}, {{poll.obs}},
+           tss.mn,tss.mx)%>%
+    filter(str_detect(date.time,t.date))%>%
+    pivot_wider(names_from = manhole.id,
+                values_from = c({{poll.sim.ch}},{{poll.obs.ch}},
+                                tss.mx,tss.mn))%>%
+    xts(.,.$date.time)%>%
+    dygraph(main = paste (mh.id,#wday(t.date,label = TRUE,abbr = TRUE),
+                          tem.res,
+                          sep=" - "),#group = t.date,
+            width = 400, 
+            height = 300)%>%
+    dyOptions(drawPoints = TRUE, useDataTimezone = TRUE,
+              pointSize = 1.5)%>%
+    dyAxis("y", label = "TSS in mg/l", valueRange = c(-100, 4000)) %>%
+    dyAxis("x", label = "Time (hrs)") %>%
+    dySeries(c("tss.mn_wwtp","tss.mgl_wwtp","tss.mx_wwtp"), label = "Simulated", color = "#7f3b08")%>%
+    dySeries("ob.tss.mgl_wwtp", label = "Observed", color = "#2d004b")%>%
+    dySeries("date.time", label = " ",color = "white")%>%
+    dyLegend(show = "always", hideOnMouseOut = FALSE)  -> dwplot
+  
+  htmltools::tags$div(dwplot, 
+                        style = 
+                        "padding:5px; 
+                        width: 450px;
+                        display:inline-block;")
+}
+
+#COD 60 min
+val.days.snt %>%
+  map(dwts.dygraph.manhole.cod,
+      data = obs.sim.stn.60min,
+      mh.id = 'WWTP',
+      tem.res = '60 min',
+      poll.sim = cod.mgl,
+      poll.obs = ob.cod.mgl,
+      poll.sim.ch = 'cod.mgl',
+      poll.obs.ch= 'ob.cod.mgl')%>%
+  as.list() -> dwplot.list.2.mh
+
+# #COD 30 min
+# val.days.snt %>%
+#   map(dwts.dygraph.manhole.cod,
+#       data = obs.sim.stn.30min,
+#       mh.id = 'WWTP',
+#       tem.res = '30 min',
+#       poll.sim = cod.mgl,
+#       poll.obs = ob.cod.mgl,
+#       poll.sim.ch = 'cod.mgl',
+#       poll.obs.ch= 'ob.cod.mgl')%>%
+#   as.list() -> dwplot.list.3.mh
+# 
+# #COD 12 min
+# val.days.snt %>%
+#   map(dwts.dygraph.manhole.cod,
+#       data = obs.sim.stn.12min,
+#       mh.id = 'WWTP',
+#       tem.res = '12 min',
+#       poll.sim = cod.mgl,
+#       poll.obs = ob.cod.mgl,
+#       poll.sim.ch = 'cod.mgl',
+#       poll.obs.ch= 'ob.cod.mgl')%>%
+#   as.list() -> dwplot.list.4.mh
+
+#TSS 60 min
+val.days.snt %>%
+  map(dwts.dygraph.manhole.tss,
+      data = obs.sim.stn.60min,
+      mh.id = 'WWTP',
+      tem.res = '60 min',
+      poll.sim = tss.mgl,
+      poll.obs = ob.tss.mgl,
+      poll.sim.ch = 'tss.mgl',
+      poll.obs.ch= 'ob.tss.mgl')%>%
+  as.list() -> dwplot.list.7.mh
+
+# #TSS 30 min
+# val.days.snt %>%
+#   map(dwts.dygraph.manhole.tss,
+#       data = obs.sim.stn.30min,
+#       mh.id = 'WWTP',
+#       tem.res = '30 min',
+#       poll.sim = tss.mgl,
+#       poll.obs = ob.tss.mgl,
+#       poll.sim.ch = 'tss.mgl',
+#       poll.obs.ch= 'ob.tss.mgl')%>%
+#   as.list() -> dwplot.list.8.mh
+# 
+# #TSS 12 min
+# val.days.snt %>%
+#   map(dwts.dygraph.manhole.tss,
+#       data = obs.sim.stn.12min,
+#       mh.id = 'WWTP',
+#       tem.res = '12 min',
+#       poll.sim = tss.mgl,
+#       poll.obs = ob.tss.mgl,
+#       poll.sim.ch = 'tss.mgl',
+#       poll.obs.ch= 'ob.tss.mgl')%>%
+#   as.list() -> dwplot.list.9.mh
+
+htmltools::browsable(htmltools::tagList(dwplot.list.2.mh,dwplot.list.7.mh))
+
+# ,
+#                                         dwplot.list.3.mh,dwplot.list.8.mh,
+#                                         dwplot.list.4.mh,dwplot.list.9.mh
+
+```
+
+
+```{r r.cod.cal, echo=FALSE}
+#Correlations for calibration day
+tbl.sim.corr.cal.T(paste('corr.tbl.cal.d0',{{ver.tim}}))%>%
+  filter(
+    Parameter2 == 'cod.mgl',
+    manhole.id == 'wwtp',
+         res.min	 == 60) %>%
+  select(res.min,manhole.id,Parameter1,Parameter2,r.cal.T,p,n_Obs) %>%
+  rename(., r.correlation = r.cal.T, 
+         WWTP_Catchment = manhole.id)%>%
+  kable()
+
+ # |
+ #           res.min	 == 30 |
+ #           res.min	 == 12
+```
+
+```{r r.tss.cal, echo=FALSE}
+#Correlations for calibration day
+tbl.sim.corr.cal.T(paste('corr.tbl.cal.d0',{{ver.tim}}))%>%
+  filter(
+    Parameter2 == 'tss.mgl',
+    manhole.id == 'wwtp',
+         res.min	 == 60) %>%
+  select(res.min,manhole.id,Parameter1,Parameter2,r.cal.T,p,n_Obs) %>%
+  rename(., r.correlation = r.cal.T, 
+         WWTP_Catchment = manhole.id)%>%
+  kable()
+
+ # |
+ #           res.min	 == 30 |
+ #           res.min	 == 12
+```
+
+
+### 2.2.2 Evaluation
+
+Confirmation that simulated and observed DW variability match at multiple spatio-temporal resolutions.
+
+This section presents the following evaluations:
+Evaluation WWTP catchment, COD, TSS at multiple temporal resolutions (60, 30, 12 min).
+Evaluation catchment 258 at multiple temporal resolutions (60, 30, 12 min).
+Evaluation catchment 39 at multiple temporal resolutions (60, 30, 12 min).
+
+
+#### **Figure 6: Model results of domestic wastewater variability**
+
+```{r plot.wwtp.vald1, echo=FALSE}
+val.days.snt <- c("2022-03-21") #Evaluation day 1
+
+#COD WWTP
+dwts.dygraph.manhole.cod <- function(
+    data,tem.res,mh.id,t.date, poll.sim, poll.obs, poll.sim.ch, poll.obs.ch){
+  
+  data %>%
+    filter(manhole.id == 'wwtp')%>%
+    select(date.time, manhole.id, 
+           {{poll.sim}}, {{poll.obs}},
+           cod.mn,cod.mx)%>%
+    filter(str_detect(date.time,t.date))%>%
+    pivot_wider(names_from = manhole.id,
+                values_from = c({{poll.sim.ch}},{{poll.obs.ch}},
+                                cod.mx,cod.mn))%>%
+    xts(.,.$date.time)%>%
+    dygraph(main = paste (#wday(t.date,label = TRUE,abbr = TRUE),
+                          mh.id,
+                          tem.res,
+                          sep=" - "),
+            width = 252, 
+            height = 230)%>% 
+    dyOptions(drawPoints = TRUE, useDataTimezone = TRUE,
+              pointSize = 1.5)%>%
+    dyAxis("y", label = "COD (mg/l)", valueRange = c(-100, 5000)) %>%
+    dyAxis("x", label = "Time (hrs)") %>% 
+    dySeries(c("cod.mn_wwtp","cod.mgl_wwtp","cod.mx_wwtp"), label = "Simulated",color = "#543005")%>%
+    dySeries("ob.cod.mgl_wwtp", label = "Observed",color = "#003c30")%>%
+    dySeries("date.time", label = " ",color = "white")%>%
+    dyLegend(show = "always",
+             hideOnMouseOut = FALSE) -> dwplot
+
+    htmltools::tags$div(dwplot, 
+                        style = 
+                        "padding:1px; 
+                        width: 252px;
+                        display:inline-block;")
+}
+ 
+#TSS WWTP
+dwts.dygraph.manhole.tss <- function(
+    data,tem.res,mh.id,t.date, poll.sim, poll.obs, poll.sim.ch, poll.obs.ch){
+
+  data %>%
+    filter(manhole.id == 'wwtp')%>%
+    select(date.time, manhole.id,
+           {{poll.sim}}, {{poll.obs}},
+           tss.mn,tss.mx)%>%
+    filter(str_detect(date.time,t.date))%>%
+    pivot_wider(names_from = manhole.id,
+                values_from = c({{poll.sim.ch}},{{poll.obs.ch}},
+                                tss.mx,tss.mn))%>%
+    xts(.,.$date.time)%>%
+    dygraph(main = paste (
+                          mh.id,#wday(t.date,label = TRUE,abbr = TRUE),
+                          tem.res,
+                          sep=" - "),#group = t.date,
+            width = 252, 
+            height = 230)%>%
+    dyOptions(drawPoints = TRUE, useDataTimezone = TRUE,
+              pointSize = 1.5)%>%
+    dyAxis("y", label = "TSS in mg/l", valueRange = c(-100, 5000)) %>%
+    dyAxis("x", label = "Time (hrs)") %>%
+    dySeries(c("tss.mn_wwtp","tss.mgl_wwtp","tss.mx_wwtp"), label = "Simulated", color = "#7f3b08")%>%
+    dySeries("ob.tss.mgl_wwtp", label = "Observed", color = "#2d004b")%>%
+    dySeries("date.time", label = " ",color = "white")%>%
+    dyLegend(show = "always", hideOnMouseOut = FALSE)  -> dwplot
+  
+  htmltools::tags$div(dwplot, 
+                        style = 
+                        "padding:1px; 
+                        width: 252px;
+                        display:inline-block;")
+}
+
+#COD 60 min
+val.days.snt %>%
+  map(dwts.dygraph.manhole.cod,
+      data = obs.sim.stn.60min,
+      tem.res = '60 min',
+      mh.id = 'WWTP',
+      poll.sim = cod.mgl,
+      poll.obs = ob.cod.mgl,
+      poll.sim.ch = 'cod.mgl',
+      poll.obs.ch= 'ob.cod.mgl')%>%
+  as.list() -> dwplot.list.2.mh
+
+#COD 30 min
+val.days.snt %>%
+  map(dwts.dygraph.manhole.cod,
+      data = obs.sim.stn.30min,
+      tem.res = '30 min',
+      mh.id = 'WWTP',
+      poll.sim = cod.mgl,
+      poll.obs = ob.cod.mgl,
+      poll.sim.ch = 'cod.mgl',
+      poll.obs.ch= 'ob.cod.mgl')%>%
+  as.list() -> dwplot.list.3.mh
+
+#COD 12 min
+val.days.snt %>%
+  map(dwts.dygraph.manhole.cod,
+      data = obs.sim.stn.12min,
+      tem.res = '12 min',
+      mh.id = 'WWTP',
+      poll.sim = cod.mgl,
+      poll.obs = ob.cod.mgl,
+      poll.sim.ch = 'cod.mgl',
+      poll.obs.ch= 'ob.cod.mgl')%>%
+  as.list() -> dwplot.list.4.mh
+
+#TSS 60 min
+val.days.snt %>%
+  map(dwts.dygraph.manhole.tss,
+      data = obs.sim.stn.60min,
+      tem.res = '60 min',
+      mh.id = 'WWTP',
+      poll.sim = tss.mgl,
+      poll.obs = ob.tss.mgl,
+      poll.sim.ch = 'tss.mgl',
+      poll.obs.ch= 'ob.tss.mgl')%>%
+  as.list() -> dwplot.list.7.mh
+
+#TSS 30 min
+val.days.snt %>%
+  map(dwts.dygraph.manhole.tss,
+      data = obs.sim.stn.30min,
+      tem.res = '30 min',
+      mh.id = 'WWTP',
+      poll.sim = tss.mgl,
+      poll.obs = ob.tss.mgl,
+      poll.sim.ch = 'tss.mgl',
+      poll.obs.ch= 'ob.tss.mgl')%>%
+  as.list() -> dwplot.list.8.mh
+
+#TSS 12 min
+val.days.snt %>%
+  map(dwts.dygraph.manhole.tss,
+      data = obs.sim.stn.12min,
+      tem.res = '12 min',
+      mh.id = 'WWTP',
+      poll.sim = tss.mgl,
+      poll.obs = ob.tss.mgl,
+      poll.sim.ch = 'tss.mgl',
+      poll.obs.ch= 'ob.tss.mgl')%>%
+  as.list() -> dwplot.list.9.mh
+
+htmltools::browsable(htmltools::tagList(
+  dwplot.list.2.mh,dwplot.list.3.mh,dwplot.list.4.mh,
+  dwplot.list.7.mh,dwplot.list.8.mh,dwplot.list.9.mh))
+```
+
+
+```{r plot.mh258.vald1, echo=FALSE}
+val.days.snt <- c("2022-03-21") #Evaluation day 1
+
+#COD 258
+dwts.dygraph.manhole.cod <- function(
+    data,tem.res,mh.id,t.date, poll.sim, poll.obs, poll.sim.ch, poll.obs.ch){
+  
+  data %>%
+    filter(manhole.id == '258')%>%
+    select(date.time, manhole.id, 
+           {{poll.sim}}, {{poll.obs}},
+           cod.mn,cod.mx)%>%
+    filter(str_detect(date.time,t.date))%>%
+    pivot_wider(names_from = manhole.id,
+                values_from = c({{poll.sim.ch}},{{poll.obs.ch}},
+                                cod.mx,cod.mn))%>%
+    xts(.,.$date.time)%>%
+    dygraph(main = paste (#wday(t.date,label = TRUE,abbr = TRUE),
+                          mh.id,
+                          tem.res,
+                          sep=" - "),
+            width = 252, 
+            height = 230)%>% 
+    dyOptions(drawPoints = TRUE, useDataTimezone = TRUE,
+              pointSize = 1.5)%>%
+    dyAxis("y", label = "COD (mg/l)", valueRange = c(-100, 5000)) %>%
+    dyAxis("x", label = "Time (hrs)") %>% 
+    dySeries(c("cod.mn_258","cod.mgl_258","cod.mx_258"), label = "Simulated",color = "#543005")%>%
+    dySeries("ob.cod.mgl_258", label = "Observed",color = "#003c30")%>%
+    dySeries("date.time", label = " ",color = "white")%>%
+    dyLegend(show = "always",
+             hideOnMouseOut = FALSE) -> dwplot
+
+    htmltools::tags$div(dwplot, 
+                        style = 
+                        "padding:1px; 
+                        width: 252px;
+                        display:inline-block;")
+}
+ 
+#TSS 258
+dwts.dygraph.manhole.tss <- function(
+    data,tem.res,mh.id,t.date, poll.sim, poll.obs, poll.sim.ch, poll.obs.ch){
+
+  data %>%
+    filter(manhole.id == '258')%>%
+    select(date.time, manhole.id,
+           {{poll.sim}}, {{poll.obs}},
+           tss.mn,tss.mx)%>%
+    filter(str_detect(date.time,t.date))%>%
+    pivot_wider(names_from = manhole.id,
+                values_from = c({{poll.sim.ch}},{{poll.obs.ch}},
+                                tss.mx,tss.mn))%>%
+    xts(.,.$date.time)%>%
+    dygraph(main = paste (
+                          mh.id,#wday(t.date,label = TRUE,abbr = TRUE),
+                          tem.res,
+                          sep=" - "),#group = t.date,
+            width = 252, 
+            height = 230)%>%
+    dyOptions(drawPoints = TRUE, useDataTimezone = TRUE,
+              pointSize = 1.5)%>%
+    dyAxis("y", label = "TSS in mg/l", valueRange = c(-100, 5000)) %>%
+    dyAxis("x", label = "Time (hrs)") %>%
+    dySeries(c("tss.mn_258","tss.mgl_258","tss.mx_258"), label = "Simulated", color = "#7f3b08")%>%
+    dySeries("ob.tss.mgl_258", label = "Observed", color = "#2d004b")%>%
+    dySeries("date.time", label = " ",color = "white")%>%
+    dyLegend(show = "always", hideOnMouseOut = FALSE)  -> dwplot
+  
+  htmltools::tags$div(dwplot, 
+                        style = 
+                        "padding:1px; 
+                        width: 252px;
+                        display:inline-block;")
+}
+
+#COD 60 min
+val.days.snt %>%
+  map(dwts.dygraph.manhole.cod,
+      data = obs.sim.stn.60min,
+      tem.res = '60 min',
+      mh.id = 'mh.258',
+      poll.sim = cod.mgl,
+      poll.obs = ob.cod.mgl,
+      poll.sim.ch = 'cod.mgl',
+      poll.obs.ch= 'ob.cod.mgl')%>%
+  as.list() -> dwplot.list.2.mh
+
+#COD 30 min
+val.days.snt %>%
+  map(dwts.dygraph.manhole.cod,
+      data = obs.sim.stn.30min,
+      tem.res = '30 min',
+      mh.id = 'mh.258',
+      poll.sim = cod.mgl,
+      poll.obs = ob.cod.mgl,
+      poll.sim.ch = 'cod.mgl',
+      poll.obs.ch= 'ob.cod.mgl')%>%
+  as.list() -> dwplot.list.3.mh
+
+#COD 12 min
+val.days.snt %>%
+  map(dwts.dygraph.manhole.cod,
+      data = obs.sim.stn.12min,
+      tem.res = '12 min',
+      mh.id = 'mh.258',
+      poll.sim = cod.mgl,
+      poll.obs = ob.cod.mgl,
+      poll.sim.ch = 'cod.mgl',
+      poll.obs.ch= 'ob.cod.mgl')%>%
+  as.list() -> dwplot.list.4.mh
+
+#TSS 60 min
+val.days.snt %>%
+  map(dwts.dygraph.manhole.tss,
+      data = obs.sim.stn.60min,
+      tem.res = '60 min',
+      mh.id = 'mh.258',
+      poll.sim = tss.mgl,
+      poll.obs = ob.tss.mgl,
+      poll.sim.ch = 'tss.mgl',
+      poll.obs.ch= 'ob.tss.mgl')%>%
+  as.list() -> dwplot.list.7.mh
+
+#TSS 30 min
+val.days.snt %>%
+  map(dwts.dygraph.manhole.tss,
+      data = obs.sim.stn.30min,
+      tem.res = '30 min',
+      mh.id = 'mh.258',
+      poll.sim = tss.mgl,
+      poll.obs = ob.tss.mgl,
+      poll.sim.ch = 'tss.mgl',
+      poll.obs.ch= 'ob.tss.mgl')%>%
+  as.list() -> dwplot.list.8.mh
+
+#TSS 12 min
+val.days.snt %>%
+  map(dwts.dygraph.manhole.tss,
+      data = obs.sim.stn.12min,
+      tem.res = '12 min',
+      mh.id = 'mh.258',
+      poll.sim = tss.mgl,
+      poll.obs = ob.tss.mgl,
+      poll.sim.ch = 'tss.mgl',
+      poll.obs.ch= 'ob.tss.mgl')%>%
+  as.list() -> dwplot.list.9.mh
+
+htmltools::browsable(htmltools::tagList(
+  dwplot.list.2.mh,dwplot.list.3.mh,dwplot.list.4.mh,
+  dwplot.list.7.mh,dwplot.list.8.mh,dwplot.list.9.mh))
+```
+
+
+```{r plot.mh39.vald1, echo=FALSE}
+val.days.snt <- c("2022-03-21") #Evaluation day 1
+
+#COD 39
+dwts.dygraph.manhole.cod <- function(
+    data,tem.res,mh.id,t.date, poll.sim, poll.obs, poll.sim.ch, poll.obs.ch){
+  
+  data %>%
+    filter(manhole.id == '39')%>%
+    select(date.time, manhole.id, 
+           {{poll.sim}}, {{poll.obs}},
+           cod.mn,cod.mx)%>%
+    filter(str_detect(date.time,t.date))%>%
+    pivot_wider(names_from = manhole.id,
+                values_from = c({{poll.sim.ch}},{{poll.obs.ch}},
+                                cod.mx,cod.mn))%>%
+    xts(.,.$date.time)%>%
+    dygraph(main = paste (#wday(t.date,label = TRUE,abbr = TRUE),
+                          mh.id,
+                          tem.res,
+                          sep=" - "),
+            width = 252, 
+            height = 230)%>% 
+    dyOptions(drawPoints = TRUE, useDataTimezone = TRUE,
+              pointSize = 1.5)%>%
+    dyAxis("y", label = "COD (mg/l)", valueRange = c(-100, 5000)) %>%
+    dyAxis("x", label = "Time (hrs)") %>% 
+    dySeries(c("cod.mn_39","cod.mgl_39","cod.mx_39"), label = "Simulated",color = "#543005")%>%
+    dySeries("ob.cod.mgl_39", label = "Observed",color = "#003c30")%>%
+    dySeries("date.time", label = " ",color = "white")%>%
+    dyLegend(show = "always",
+             hideOnMouseOut = FALSE) -> dwplot
+
+    htmltools::tags$div(dwplot, 
+                        style = 
+                        "padding:1px; 
+                        width: 252px;
+                        display:inline-block;")
+}
+ 
+#TSS 39
+dwts.dygraph.manhole.tss <- function(
+    data,tem.res,mh.id,t.date, poll.sim, poll.obs, poll.sim.ch, poll.obs.ch){
+
+  data %>%
+    filter(manhole.id == '39')%>%
+    select(date.time, manhole.id,
+           {{poll.sim}}, {{poll.obs}},
+           tss.mn,tss.mx)%>%
+    filter(str_detect(date.time,t.date))%>%
+    pivot_wider(names_from = manhole.id,
+                values_from = c({{poll.sim.ch}},{{poll.obs.ch}},
+                                tss.mx,tss.mn))%>%
+    xts(.,.$date.time)%>%
+    dygraph(main = paste (
+                          mh.id,#wday(t.date,label = TRUE,abbr = TRUE),
+                          tem.res,
+                          sep=" - "),#group = t.date,
+            width = 252, 
+            height = 230)%>%
+    dyOptions(drawPoints = TRUE, useDataTimezone = TRUE,
+              pointSize = 1.5)%>%
+    dyAxis("y", label = "TSS in mg/l", valueRange = c(-100, 5000)) %>%
+    dyAxis("x", label = "Time (hrs)") %>%
+    dySeries(c("tss.mn_39","tss.mgl_39","tss.mx_39"), label = "Simulated", color = "#7f3b08")%>%
+    dySeries("ob.tss.mgl_39", label = "Observed", color = "#2d004b")%>%
+    dySeries("date.time", label = " ",color = "white")%>%
+    dyLegend(show = "always", hideOnMouseOut = FALSE)  -> dwplot
+  
+  htmltools::tags$div(dwplot, 
+                        style = 
+                        "padding:1px; 
+                        width: 252px;
+                        display:inline-block;")
+}
+
+#COD 60 min
+val.days.snt %>%
+  map(dwts.dygraph.manhole.cod,
+      data = obs.sim.stn.60min,
+      tem.res = '60 min',
+      mh.id = 'mh.39',
+      poll.sim = cod.mgl,
+      poll.obs = ob.cod.mgl,
+      poll.sim.ch = 'cod.mgl',
+      poll.obs.ch= 'ob.cod.mgl')%>%
+  as.list() -> dwplot.list.2.mh
+
+#COD 30 min
+val.days.snt %>%
+  map(dwts.dygraph.manhole.cod,
+      data = obs.sim.stn.30min,
+      tem.res = '30 min',
+      mh.id = 'mh.39',
+      poll.sim = cod.mgl,
+      poll.obs = ob.cod.mgl,
+      poll.sim.ch = 'cod.mgl',
+      poll.obs.ch= 'ob.cod.mgl')%>%
+  as.list() -> dwplot.list.3.mh
+
+#COD 12 min
+val.days.snt %>%
+  map(dwts.dygraph.manhole.cod,
+      data = obs.sim.stn.12min,
+      tem.res = '12 min',
+      mh.id = 'mh.39',
+      poll.sim = cod.mgl,
+      poll.obs = ob.cod.mgl,
+      poll.sim.ch = 'cod.mgl',
+      poll.obs.ch= 'ob.cod.mgl')%>%
+  as.list() -> dwplot.list.4.mh
+
+#TSS 60 min
+val.days.snt %>%
+  map(dwts.dygraph.manhole.tss,
+      data = obs.sim.stn.60min,
+      tem.res = '60 min',
+      mh.id = 'mh.39',
+      poll.sim = tss.mgl,
+      poll.obs = ob.tss.mgl,
+      poll.sim.ch = 'tss.mgl',
+      poll.obs.ch= 'ob.tss.mgl')%>%
+  as.list() -> dwplot.list.7.mh
+
+#TSS 30 min
+val.days.snt %>%
+  map(dwts.dygraph.manhole.tss,
+      data = obs.sim.stn.30min,
+      tem.res = '30 min',
+      mh.id = 'mh.39',
+      poll.sim = tss.mgl,
+      poll.obs = ob.tss.mgl,
+      poll.sim.ch = 'tss.mgl',
+      poll.obs.ch= 'ob.tss.mgl')%>%
+  as.list() -> dwplot.list.8.mh
+
+#TSS 12 min
+val.days.snt %>%
+  map(dwts.dygraph.manhole.tss,
+      data = obs.sim.stn.12min,
+      tem.res = '12 min',
+      mh.id = 'mh.39',
+      poll.sim = tss.mgl,
+      poll.obs = ob.tss.mgl,
+      poll.sim.ch = 'tss.mgl',
+      poll.obs.ch= 'ob.tss.mgl')%>%
+  as.list() -> dwplot.list.9.mh
+
+htmltools::browsable(htmltools::tagList(
+  dwplot.list.2.mh,dwplot.list.3.mh,dwplot.list.4.mh,
+  dwplot.list.7.mh,dwplot.list.8.mh,dwplot.list.9.mh))
+```
+
+#### **Table 2. Metrics to evaluate simulated DW variability**
+
+```{r r.d1.val, echo=FALSE, fig.height = 5, fig.width = 10}
+options(scipen=999)
+library(kableExtra)
+#Correlations for Evaluation day = Monday
+#For Evaluation day 1
+tbl.sim.corr.val.d1<- function(
+    dw.corr.tbl = paste('corr.tbl.val.M',{{ver.tim}})){
+  
+  z<-rbind(
+    as_tibble(vald1.dw.corr.whole(180,obs.sim.stn.180min,'wwtp',"cod.mgl","ob.cod.mgl")),
+    as_tibble(vald1.dw.corr.whole(60,obs.sim.stn.60min,'wwtp',"cod.mgl","ob.cod.mgl")),
+    as_tibble(vald1.dw.corr.whole(30,obs.sim.stn.30min,'wwtp',"cod.mgl","ob.cod.mgl")),
+    as_tibble(vald1.dw.corr.whole(12,obs.sim.stn.12min,'wwtp',"cod.mgl","ob.cod.mgl")),
+    as_tibble(vald1.dw.corr.whole(06,obs.sim.stn.06min,'wwtp',"cod.mgl","ob.cod.mgl"))
+  )
+  
+  x<-rbind(
+    as_tibble(vald1.dw.corr.whole(180,obs.sim.stn.180min,258,"cod.mgl","ob.cod.mgl")),
+    as_tibble(vald1.dw.corr.whole(60,obs.sim.stn.60min,258,"cod.mgl","ob.cod.mgl")),
+    as_tibble(vald1.dw.corr.whole(30,obs.sim.stn.30min,258,"cod.mgl","ob.cod.mgl")),
+    as_tibble(vald1.dw.corr.whole(12,obs.sim.stn.12min,258,"cod.mgl","ob.cod.mgl")),
+    as_tibble(vald1.dw.corr.whole(06,obs.sim.stn.06min,258,"cod.mgl","ob.cod.mgl"))
+  )
+  
+  c<-rbind(
+    as_tibble(vald1.dw.corr.whole(180,obs.sim.stn.180min,39,"cod.mgl","ob.cod.mgl")),
+    as_tibble(vald1.dw.corr.whole(60,obs.sim.stn.30min,39,"cod.mgl","ob.cod.mgl")),
+    as_tibble(vald1.dw.corr.whole(30,obs.sim.stn.30min,39,"cod.mgl","ob.cod.mgl")),
+    as_tibble(vald1.dw.corr.whole(12,obs.sim.stn.12min,39,"cod.mgl","ob.cod.mgl")),
+    as_tibble(vald1.dw.corr.whole(06,obs.sim.stn.06min,39,"cod.mgl","ob.cod.mgl"))
+  )
+  
+  v<-rbind(
+    as_tibble(vald1.dw.corr.whole(180,obs.sim.stn.180min,'wwtp',"tss.mgl","ob.tss.mgl")),
+    as_tibble(vald1.dw.corr.whole(60,obs.sim.stn.60min,'wwtp',"tss.mgl","ob.tss.mgl")),
+    as_tibble(vald1.dw.corr.whole(30,obs.sim.stn.30min,'wwtp',"tss.mgl","ob.tss.mgl")),
+    as_tibble(vald1.dw.corr.whole(12,obs.sim.stn.12min,'wwtp',"tss.mgl","ob.tss.mgl")),
+    as_tibble(vald1.dw.corr.whole(06,obs.sim.stn.06min,'wwtp',"tss.mgl","ob.tss.mgl"))
+  )
+  
+  b<-rbind(
+    as_tibble(vald1.dw.corr.whole(180,obs.sim.stn.180min,258,"tss.mgl","ob.tss.mgl")),
+    as_tibble(vald1.dw.corr.whole(60,obs.sim.stn.60min,258,"tss.mgl","ob.tss.mgl")),
+    as_tibble(vald1.dw.corr.whole(30,obs.sim.stn.30min,258,"tss.mgl","ob.tss.mgl")),
+    as_tibble(vald1.dw.corr.whole(12,obs.sim.stn.12min,258,"tss.mgl","ob.tss.mgl")),
+    as_tibble(vald1.dw.corr.whole(06,obs.sim.stn.06min,258,"tss.mgl","ob.tss.mgl"))
+  )
+  
+  n<-rbind(
+    as_tibble(vald1.dw.corr.whole(180,obs.sim.stn.180min,39,"tss.mgl","ob.tss.mgl")),
+    as_tibble(vald1.dw.corr.whole(60,obs.sim.stn.60min,39,"tss.mgl","ob.tss.mgl")),
+    as_tibble(vald1.dw.corr.whole(30,obs.sim.stn.30min,39,"tss.mgl","ob.tss.mgl")),
+    as_tibble(vald1.dw.corr.whole(12,obs.sim.stn.12min,39,"tss.mgl","ob.tss.mgl")),
+    as_tibble(vald1.dw.corr.whole(06,obs.sim.stn.06min,39,"tss.mgl","ob.tss.mgl"))
+  )
+  
+  dw.results <- as_tibble(rbind(z,x,c,v,b,n))
+  
+  #Adding to environment
+  assign(dw.corr.tbl,dw.results,envir = globalenv())
+  #Storing at folder
+  #write_csv(dw.results,paste('results/calibration.snt/',{{ver.tim}},'.corr.tbl.val.d1.csv', sep=""))
+  #Show results in console
+  dw.results
+  
+}
+
+tbl.sim.corr.val.d1(paste('corr.tbl.val.d1',{{ver.tim}}))%>%
+  mutate(ID = row_number()) %>%
+  select(ID,res.min,manhole.id,Parameter2,r.val.M,p,n_Obs)%>%
+  filter(manhole.id == "wwtp")%>%
+  rename(., 
+         WWTP_Catchment = manhole.id,
+         resolution.minutes=res.min,
+         Pollutant = Parameter2,
+         p.value = p, 
+         r.correlation = r.val.M
+         )%>% kable(., "simple")
+
+tbl.sim.corr.val.d1(paste('corr.tbl.val.d1',{{ver.tim}}))%>%
+  mutate(ID = row_number()) %>%
+  select(ID,res.min,manhole.id,Parameter2,r.val.M,p,n_Obs)%>%
+  filter(manhole.id == 258)%>%
+  rename(., 
+         Sub.Catchment_258 = manhole.id,
+         resolution.minutes=res.min,
+         Pollutant = Parameter2,
+         p.value = p, 
+         r.correlation = r.val.M
+         )%>% kable(., "simple")
+
+tbl.sim.corr.val.d1(paste('corr.tbl.val.d1',{{ver.tim}}))%>%
+  mutate(ID = row_number()) %>%
+  select(ID,res.min,manhole.id,Parameter2,r.val.M,p,n_Obs)%>%
+  filter(manhole.id == 39)%>%
+  rename(., 
+         Sub.Catchment_39 = manhole.id,
+         resolution.minutes=res.min,
+         Pollutant = Parameter2,
+         p.value = p, 
+         r.correlation = r.val.M
+         )%>% kable(., "simple")
+
+#arrange(desc(r.val.M)) %>%
+
+# %>% kable() -> g
+# g
+
+#kable(align = "c")
+
+
+```
+
+```{r}
+installed.packages()[names(sessionInfo()$otherPkgs), "Version"]
+``` 

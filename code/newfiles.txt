@@ -1,0 +1,17 @@
+rm -r results/calibration.snt
+mkdir results/calibration.snt
+
+touch results/calibration.snt/manholes.snt.cal1.csv
+touch results/calibration.snt/dwpee.snt.cal1.csv
+touch results/calibration.snt/dwpoo.snt.cal1.csv
+touch results/calibration.snt/dwshower.snt.cal1.csv
+touch results/calibration.snt/dwkitchensink.snt.cal1.csv
+touch results/calibration.snt/dwwmachine.snt.cal1.csv
+touch results/calibration.snt/dwwashbasin.snt.cal1.csv
+touch results/calibration.snt/manholes.snt.no.cal1.csv
+touch results/calibration.snt/dwpee.snt.no.cal1.csv
+touch results/calibration.snt/dwpoo.snt.no.cal1.csv
+touch results/calibration.snt/dwshower.snt.no.cal1.csv
+touch results/calibration.snt/dwkitchensink.snt.no.cal1.csv
+touch results/calibration.snt/dwwmachine.snt.no.cal1.csv
+touch results/calibration.snt/dwwashbasin.snt.no.cal1.csv
