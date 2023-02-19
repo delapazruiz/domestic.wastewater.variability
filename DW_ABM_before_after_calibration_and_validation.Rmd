@@ -1,15 +1,11 @@
 ---
-title: "**REPRODUCIBLE RESULTS. Modeling spatiotemporal domestic wastewater variability**"  
-subtitle: "**Implications to measure sanitation efficiency**"
-author:
-  - name: "*Néstor DelaPaz-Ruíz, Ellen-Wien Augustijn, Mahdi Farnaghi, Raul Zurita-Milla*"
-    affiliation: Department of Geo-Information Process (GIP),  Faculty of Geo-Information Science and Earth Observation (ITC),  University of Twente,  Drienerlolaan 5, 7522 NB Enschede, The Netherlands
-
-date: "2022-09-16"
+title: "**REPRODUCIBLE RESULTS. Modeling spatiotemporal domestic wastewater variability: Implications to measure sanitation efficiency**"
+author: Néstor DelaPaz-Ruíz, Ellen-Wien Augustijn, Mahdi Farnaghi, Raul Zurita-Milla
+date: 2022-09-16
 output:
-  html_document:
-    toc: true
-  
+  md_document:
+    variant: markdown_github
+always_allow_html: true
 ---
 
 ```{r setup, include=FALSE}
@@ -28,12 +24,13 @@ library(Rcpp)
 #Setup code required
 ver.tim <- 0
  
-  source("code/dw.abm.events.into.r.cal.val.1.r")
-  source("code/dw.abm.events.into.r.no.cal.r")
+  #source("code/dw.abm.events.into.r.cal.val.1.r")
+  #source("code/dw.abm.events.into.r.no.cal.r")
   source("code/dw.abm.validation.snt.before.after.cal.R")
 
 ```
 
+Affiliation: Department of Geo-Information Process (GIP),  Faculty of Geo-Information Science and Earth Observation (ITC),  University of Twente,  Drienerlolaan 5, 7522 NB Enschede, The Netherlands
 
 # Model calibration and results of domestic wastewater (DW) variability
 
@@ -55,7 +52,7 @@ Evaluation: Prove that the calibrated DW ABM can reproduce the DW variability of
 
 # 2. Domestic wastewater variability: Time series and correlations
 
-## 2.1 Instructions 
+## 2.1 Instructions
 
 Before starting, make sure the files that end with `.snt.cal1.csv` exist with `size= 0B` in the path: `"results/calibration.snt/"`. You can assist yourself executing the following code in Git Bash:
 
@@ -63,10 +60,10 @@ Before starting, make sure the files that end with `.snt.cal1.csv` exist with `s
 . ./code/newfiles.txt
 ```
 
-1) Open the Netlogo files: `dw.sms.abm.snt.2020.cal.val.1.nlogo` & `dw.sms.abm.snt.2020.no.cal.val.1.nlogo`
-2) For each Netlogo file press `ctrl+shift+B` to open the Behavior space menu.
-3) Select and run the experiment: `cal.val.1 (50 runs)` and wait until the simulation concludes.
-4) Execute the below code chucks to obtain the results of the calibration and evaluation based on DW variability analysis.
+1)  Open the Netlogo files: `dw.sms.abm.snt.2020.cal.val.1.nlogo` & `dw.sms.abm.snt.2020.no.cal.val.1.nlogo`
+2)  For each Netlogo file press `ctrl+shift+B` to open the Behavior space menu.
+3)  Select and run the experiment: `cal.val.1 (50 runs)` and wait until the simulation concludes.
+4)  Execute the below code chucks to obtain the results of the calibration and evaluation based on DW variability analysis.
 
 ## 2.2 Results
 
@@ -231,7 +228,6 @@ htmltools::browsable(htmltools::tagList(dwplot.list.2.mh,dwplot.list.7.mh))
                                         # dwplot.list.4.mh,dwplot.list.9.mh
 
 ```
-
 
 ```{r no.cal.r.cod.cal, echo=FALSE}
 #Correlations for calibration
@@ -426,7 +422,6 @@ htmltools::browsable(htmltools::tagList(dwplot.list.2.mh,dwplot.list.7.mh))
 
 ```
 
-
 ```{r r.cod.cal, echo=FALSE}
 #Correlations for calibration day
 tbl.sim.corr.cal.T(paste('corr.tbl.cal.d0',{{ver.tim}}))%>%
@@ -461,16 +456,11 @@ tbl.sim.corr.cal.T(paste('corr.tbl.cal.d0',{{ver.tim}}))%>%
  #           res.min	 == 12
 ```
 
-
 ### 2.2.2 Evaluation
 
 Confirmation that simulated and observed DW variability match at multiple spatio-temporal resolutions.
 
-This section presents the following evaluations:
-Evaluation WWTP catchment, COD, TSS at multiple temporal resolutions (60, 30, 12 min).
-Evaluation catchment 258 at multiple temporal resolutions (60, 30, 12 min).
-Evaluation catchment 39 at multiple temporal resolutions (60, 30, 12 min).
-
+This section presents the following evaluations: Evaluation WWTP catchment, COD, TSS at multiple temporal resolutions (60, 30, 12 min). Evaluation catchment 258 at multiple temporal resolutions (60, 30, 12 min). Evaluation catchment 39 at multiple temporal resolutions (60, 30, 12 min).
 
 #### **Figure 6: Model results of domestic wastewater variability**
 
@@ -627,7 +617,6 @@ htmltools::browsable(htmltools::tagList(
   dwplot.list.7.mh,dwplot.list.8.mh,dwplot.list.9.mh))
 ```
 
-
 ```{r plot.mh258.vald1, echo=FALSE}
 val.days.snt <- c("2022-03-21") #Evaluation day 1
 
@@ -780,7 +769,6 @@ htmltools::browsable(htmltools::tagList(
   dwplot.list.2.mh,dwplot.list.3.mh,dwplot.list.4.mh,
   dwplot.list.7.mh,dwplot.list.8.mh,dwplot.list.9.mh))
 ```
-
 
 ```{r plot.mh39.vald1, echo=FALSE}
 val.days.snt <- c("2022-03-21") #Evaluation day 1
@@ -1052,4 +1040,4 @@ tbl.sim.corr.val.d1(paste('corr.tbl.val.d1',{{ver.tim}}))%>%
 
 ```{r}
 installed.packages()[names(sessionInfo()$otherPkgs), "Version"]
-``` 
+```
