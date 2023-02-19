@@ -215,12 +215,9 @@ docker run -d --name dwrstudio -p 8787:8787 -e PASSWORD=mypassword -v 'my/direct
 
 ## Expected results
 
-The bellow content is what you can expect after pressing `Knit` in
-RStudio.
-
-\`\`\`\`{=html, echo=F, eval=F}
-
-\`\`\`\`
+Download the repository and open the file:
+`DW_ABM_before_after_calibration_and_validation.html` to see expected
+results after pressing `Knit` in RStudio.
 
 ## Support
 

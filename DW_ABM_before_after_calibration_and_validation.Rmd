@@ -1,11 +1,14 @@
 ---
-title: "**REPRODUCIBLE RESULTS. Modeling spatiotemporal domestic wastewater variability: Implications to measure sanitation efficiency**"
-author: Néstor DelaPaz-Ruíz, Ellen-Wien Augustijn, Mahdi Farnaghi, Raul Zurita-Milla
-date: 2022-09-16
+title: "**REPRODUCIBLE RESULTS. Modeling spatiotemporal domestic wastewater variability**"  
+subtitle: "**Implications to measure sanitation efficiency**"
+author:
+  - name: "*Néstor DelaPaz-Ruíz, Ellen-Wien Augustijn, Mahdi Farnaghi, Raul Zurita-Milla*"
+    affiliation: Department of Geo-Information Process (GIP),  Faculty of Geo-Information Science and Earth Observation (ITC),  University of Twente,  Drienerlolaan 5, 7522 NB Enschede, The Netherlands
+
+date: "2022-09-16"
 output:
-  md_document:
-    variant: markdown_github
-always_allow_html: true
+  html_document:
+    toc: true
 ---
 
 ```{r setup, include=FALSE}
@@ -24,13 +27,11 @@ library(Rcpp)
 #Setup code required
 ver.tim <- 0
  
-  #source("code/dw.abm.events.into.r.cal.val.1.r")
-  #source("code/dw.abm.events.into.r.no.cal.r")
+  source("code/dw.abm.events.into.r.cal.val.1.r")
+  source("code/dw.abm.events.into.r.no.cal.r")
   source("code/dw.abm.validation.snt.before.after.cal.R")
 
 ```
-
-Affiliation: Department of Geo-Information Process (GIP),  Faculty of Geo-Information Science and Earth Observation (ITC),  University of Twente,  Drienerlolaan 5, 7522 NB Enschede, The Netherlands
 
 # Model calibration and results of domestic wastewater (DW) variability
 
