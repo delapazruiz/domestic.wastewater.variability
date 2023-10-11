@@ -88,59 +88,59 @@ dwfw.var.spt.resol.processing <- function(
     mh.out.res.loc.df = 'fwmh.stn.val.12min.df',
     mh.out.res.loc.plot = 'fwmh.stn.val.12min.plot'
 ){
-  
-  # Manholes  
-  
+
+  # Manholes
+
   mh.loc.pol.min <- mh.loc.pol
   mh.loc.pol.min$date.time <- align.time(as.POSIXct(mh.loc.pol.min$date.time), tem.res.in.min.int * 60)
-  
-  
+
+
   #Pollutants concentration applies mean values in a time window
   #This applies when the concentration from two events is combined:Target question
   dw.manholes.minute.cod <- aggregate(ob.cod.mgl ~
-                                        format(as.POSIXct(mh.loc.pol.min$date.time), "%Y-%m-%d %H:%M")+ 
+                                        format(as.POSIXct(mh.loc.pol.min$date.time), "%Y-%m-%d %H:%M")+
                                         mh.loc.pol.min$manhole.id,
                                       data= mh.loc.pol.min,
                                       FUN = mean)%>% as_tibble()
-  
+
   dw.manholes.minute.tss <- aggregate(ob.tss.mgl ~
-                                        format(as.POSIXct(mh.loc.pol.min$date.time), "%Y-%m-%d %H:%M")+ 
+                                        format(as.POSIXct(mh.loc.pol.min$date.time), "%Y-%m-%d %H:%M")+
                                         mh.loc.pol.min$manhole.id,
                                       data= mh.loc.pol.min,
                                       FUN = mean)%>% as_tibble()
-  
+
   #Liters apply the sum of the values in a time window
   #This applies when the total amount of DW production is the target
-  dw.manholes.minute.bod <- aggregate(ob.bod.mgl ~ 
-                                        format(as.POSIXct(mh.loc.pol.min$date.time), "%Y-%m-%d %H:%M")+ 
+  dw.manholes.minute.bod <- aggregate(ob.bod.mgl ~
+                                        format(as.POSIXct(mh.loc.pol.min$date.time), "%Y-%m-%d %H:%M")+
                                         mh.loc.pol.min$manhole.id,
                                       data= mh.loc.pol.min,
                                       FUN = 'mean')%>% as_tibble()
-  
+
   #Merged COD TSS LTS by space-time
   mh.out.res.name.df <- inner_join(dw.manholes.minute.cod,dw.manholes.minute.tss)
   mh.out.res.name.df <- inner_join(mh.out.res.name.df,dw.manholes.minute.bod)
-  
+
   colnames(mh.out.res.name.df) <-c("date.time","manhole.id","ob.cod.mgl","ob.tss.mgl","ob.bod.mgl")
   mh.out.res.name.df$date.time <- parse_date_time(mh.out.res.name.df$date.time, orders = c("%Y-%m-%d %H:%M"))
-  
-  
+
+
   # Plotting all results
-  
+
   # mh.out.res.name.plot <- c(
   #   dwplot.list.manhole.1,dwplot.list.manhole.2,dwplot.list.manhole.3,
   #   dwplot.list.manhole.4,dwplot.list.manhole.5)
-  
+
   #Saving results
   assign(mh.out.res.loc.df,mh.out.res.name.df,
          envir = globalenv())
-  
+
   # assign(mh.out.res.loc.plot,mh.out.res.name.plot,
   #        envir = globalenv())
-  
+
   #Plotting
   #htmltools::browsable(htmltools::tagList(mh.out.res.name.plot))
-  
+
 }
 
 #> FW 06 min DW- COD.TSS.BOD validation
@@ -274,19 +274,19 @@ dt.val
 
 #Tuesday- as calibration & Monday as validation
 no.cal.obs.sim.stn.06min %>%
-  filter(between(date.time, dt.val[4,1], dt.val[4,2])) %>%
+  filter(between(date.time, dt.val$start[4], dt.val$end[4])) %>%
   .$date.time%>%wday(label=TRUE)
 
 no.cal.obs.sim.stn.06min %>%
-  filter(between(date.time, dt.val[3,1], dt.val[3,2])) %>%
+  filter(between(date.time, dt.val$start[3], dt.val$end[3])) %>%
   mutate(.,cal.day = wday(.$date.time,label=TRUE)) %>% .[,c('cal.day')]
 
 no.cal.obs.sim.stn.06min %>%
-  filter(between(date.time, dt.val[4,1], dt.val[4,2])) %>%
+  filter(between(date.time, dt.val$start[4], dt.val$end[4])) %>%
   mutate(.,cal.day = wday(.$date.time,label=TRUE)) %>% .[,c('cal.day')]
 
 no.cal.obs.sim.stn.06min %>%
-  filter(between(date.time, dt.val[5,1], dt.val[5,2])) %>%
+  filter(between(date.time, dt.val$start[5], dt.val$end[5])) %>%
   mutate(.,cal.day = wday(.$date.time,label=TRUE)) %>% .[,c('cal.day')]
 
 #Correlation for specific spatio-temporal resolutions
@@ -302,14 +302,14 @@ cal.dw.corr.whole <- function(
   x<- tibble(ver.tm = {{ver.tim}},
              res.min = tem.res,
              manhole.id =mh.id)
-  
+
   #Tuesday-Calibration day
   a <- obs.sim.loc.t.resol %>%
-    filter(between(date.time, dt.val[4,1], dt.val[4,2]))%>%
+    filter(between(date.time, dt.val$start[4], dt.val$end[4]))%>%
     filter(manhole.id == mh.id) %>%
-    correlation(select =c(obs.pollutat,sim.pollutat)) %>% 
+    correlation(select =c(obs.pollutat,sim.pollutat)) %>%
     as_tibble()%>% rename(., r.cal.T=r)
-  
+
   as_tibble(cbind(x,a))
 }
 
@@ -324,14 +324,14 @@ vald1.dw.corr.whole <- function(
   x<- tibble(ver.tm = {{ver.tim}},
              res.min = tem.res,
              manhole.id =mh.id)
-  
+
   #Monday-Validation day
   b <- obs.sim.loc.t.resol %>%
-    filter(between(date.time, dt.val[3,1], dt.val[3,2]))%>%
+    filter(between(date.time, dt.val$start[3], dt.val$end[3]))%>%
     filter(manhole.id == mh.id) %>%
     correlation(select =c(obs.pollutat,sim.pollutat)) %>%
     as_tibble() %>% rename(., r.val.M=r)
-  
+
   as_tibble(cbind(x,b))
 }
 
@@ -341,7 +341,7 @@ vald1.dw.corr.whole <- function(
 #For calibration day
 no.cal.tbl.sim.corr.cal.T<- function(
     dw.corr.tbl = paste('corr.tbl.cal.T',{{ver.tim}})){
-  
+
   z<-rbind(
     as_tibble(cal.dw.corr.whole(180,no.cal.obs.sim.stn.180min,'wwtp',"cod.mgl","ob.cod.mgl")),
     as_tibble(cal.dw.corr.whole(60,no.cal.obs.sim.stn.60min,'wwtp',"cod.mgl","ob.cod.mgl")),
@@ -349,7 +349,7 @@ no.cal.tbl.sim.corr.cal.T<- function(
     as_tibble(cal.dw.corr.whole(12,no.cal.obs.sim.stn.12min,'wwtp',"cod.mgl","ob.cod.mgl")),
     as_tibble(cal.dw.corr.whole(06,no.cal.obs.sim.stn.06min,'wwtp',"cod.mgl","ob.cod.mgl"))
   )
-  
+
   x<-rbind(
     as_tibble(cal.dw.corr.whole(180,no.cal.obs.sim.stn.180min,258,"cod.mgl","ob.cod.mgl")),
     as_tibble(cal.dw.corr.whole(60,no.cal.obs.sim.stn.60min,258,"cod.mgl","ob.cod.mgl")),
@@ -357,7 +357,7 @@ no.cal.tbl.sim.corr.cal.T<- function(
     as_tibble(cal.dw.corr.whole(12,no.cal.obs.sim.stn.12min,258,"cod.mgl","ob.cod.mgl")),
     as_tibble(cal.dw.corr.whole(06,no.cal.obs.sim.stn.06min,258,"cod.mgl","ob.cod.mgl"))
   )
-  
+
   c<-rbind(
     as_tibble(cal.dw.corr.whole(180,no.cal.obs.sim.stn.180min,39,"cod.mgl","ob.cod.mgl")),
     as_tibble(cal.dw.corr.whole(60,no.cal.obs.sim.stn.30min,39,"cod.mgl","ob.cod.mgl")),
@@ -365,7 +365,7 @@ no.cal.tbl.sim.corr.cal.T<- function(
     as_tibble(cal.dw.corr.whole(12,no.cal.obs.sim.stn.12min,39,"cod.mgl","ob.cod.mgl")),
     as_tibble(cal.dw.corr.whole(06,no.cal.obs.sim.stn.06min,39,"cod.mgl","ob.cod.mgl"))
   )
-  
+
   v<-rbind(
     as_tibble(cal.dw.corr.whole(180,no.cal.obs.sim.stn.180min,'wwtp',"tss.mgl","ob.tss.mgl")),
     as_tibble(cal.dw.corr.whole(60,no.cal.obs.sim.stn.60min,'wwtp',"tss.mgl","ob.tss.mgl")),
@@ -373,7 +373,7 @@ no.cal.tbl.sim.corr.cal.T<- function(
     as_tibble(cal.dw.corr.whole(12,no.cal.obs.sim.stn.12min,'wwtp',"tss.mgl","ob.tss.mgl")),
     as_tibble(cal.dw.corr.whole(06,no.cal.obs.sim.stn.06min,'wwtp',"tss.mgl","ob.tss.mgl"))
   )
-  
+
   b<-rbind(
     as_tibble(cal.dw.corr.whole(180,no.cal.obs.sim.stn.180min,258,"tss.mgl","ob.tss.mgl")),
     as_tibble(cal.dw.corr.whole(60,no.cal.obs.sim.stn.60min,258,"tss.mgl","ob.tss.mgl")),
@@ -381,7 +381,7 @@ no.cal.tbl.sim.corr.cal.T<- function(
     as_tibble(cal.dw.corr.whole(12,no.cal.obs.sim.stn.12min,258,"tss.mgl","ob.tss.mgl")),
     as_tibble(cal.dw.corr.whole(06,no.cal.obs.sim.stn.06min,258,"tss.mgl","ob.tss.mgl"))
   )
-  
+
   n<-rbind(
     as_tibble(cal.dw.corr.whole(180,no.cal.obs.sim.stn.180min,39,"tss.mgl","ob.tss.mgl")),
     as_tibble(cal.dw.corr.whole(60,no.cal.obs.sim.stn.60min,39,"tss.mgl","ob.tss.mgl")),
@@ -389,22 +389,22 @@ no.cal.tbl.sim.corr.cal.T<- function(
     as_tibble(cal.dw.corr.whole(12,no.cal.obs.sim.stn.12min,39,"tss.mgl","ob.tss.mgl")),
     as_tibble(cal.dw.corr.whole(06,no.cal.obs.sim.stn.06min,39,"tss.mgl","ob.tss.mgl"))
   )
-  
+
   dw.results <- as_tibble(rbind(z,x,c,v,b,n))
-  
+
   #Adding to environment
   assign(dw.corr.tbl,dw.results,envir = globalenv())
   #Storing at folder
   #write_csv(dw.results,paste('results/calibration.snt/',{{ver.tim}},'.corr.tbl.cal.T.csv', sep=""))
   #Show results in console
   dw.results
-  
+
 }
 
 #For validation day 1
 no.cal.tbl.sim.corr.val.d1<- function(
     dw.corr.tbl = paste('corr.tbl.cal.M',{{ver.tim}})){
-  
+
   z<-rbind(
     as_tibble(vald1.dw.corr.whole(180,no.cal.obs.sim.stn.180min,'wwtp',"cod.mgl","ob.cod.mgl")),
     as_tibble(vald1.dw.corr.whole(60,no.cal.obs.sim.stn.60min,'wwtp',"cod.mgl","ob.cod.mgl")),
@@ -412,7 +412,7 @@ no.cal.tbl.sim.corr.val.d1<- function(
     as_tibble(vald1.dw.corr.whole(12,no.cal.obs.sim.stn.12min,'wwtp',"cod.mgl","ob.cod.mgl")),
     as_tibble(vald1.dw.corr.whole(06,no.cal.obs.sim.stn.06min,'wwtp',"cod.mgl","ob.cod.mgl"))
   )
-  
+
   x<-rbind(
     as_tibble(vald1.dw.corr.whole(180,no.cal.obs.sim.stn.180min,258,"cod.mgl","ob.cod.mgl")),
     as_tibble(vald1.dw.corr.whole(60,no.cal.obs.sim.stn.60min,258,"cod.mgl","ob.cod.mgl")),
@@ -420,7 +420,7 @@ no.cal.tbl.sim.corr.val.d1<- function(
     as_tibble(vald1.dw.corr.whole(12,no.cal.obs.sim.stn.12min,258,"cod.mgl","ob.cod.mgl")),
     as_tibble(vald1.dw.corr.whole(06,no.cal.obs.sim.stn.06min,258,"cod.mgl","ob.cod.mgl"))
   )
-  
+
   c<-rbind(
     as_tibble(vald1.dw.corr.whole(180,no.cal.obs.sim.stn.180min,39,"cod.mgl","ob.cod.mgl")),
     as_tibble(vald1.dw.corr.whole(60,no.cal.obs.sim.stn.30min,39,"cod.mgl","ob.cod.mgl")),
@@ -428,7 +428,7 @@ no.cal.tbl.sim.corr.val.d1<- function(
     as_tibble(vald1.dw.corr.whole(12,no.cal.obs.sim.stn.12min,39,"cod.mgl","ob.cod.mgl")),
     as_tibble(vald1.dw.corr.whole(06,no.cal.obs.sim.stn.06min,39,"cod.mgl","ob.cod.mgl"))
   )
-  
+
   v<-rbind(
     as_tibble(vald1.dw.corr.whole(180,no.cal.obs.sim.stn.180min,'wwtp',"tss.mgl","ob.tss.mgl")),
     as_tibble(vald1.dw.corr.whole(60,no.cal.obs.sim.stn.60min,'wwtp',"tss.mgl","ob.tss.mgl")),
@@ -436,7 +436,7 @@ no.cal.tbl.sim.corr.val.d1<- function(
     as_tibble(vald1.dw.corr.whole(12,no.cal.obs.sim.stn.12min,'wwtp',"tss.mgl","ob.tss.mgl")),
     as_tibble(vald1.dw.corr.whole(06,no.cal.obs.sim.stn.06min,'wwtp',"tss.mgl","ob.tss.mgl"))
   )
-  
+
   b<-rbind(
     as_tibble(vald1.dw.corr.whole(180,no.cal.obs.sim.stn.180min,258,"tss.mgl","ob.tss.mgl")),
     as_tibble(vald1.dw.corr.whole(60,no.cal.obs.sim.stn.60min,258,"tss.mgl","ob.tss.mgl")),
@@ -444,7 +444,7 @@ no.cal.tbl.sim.corr.val.d1<- function(
     as_tibble(vald1.dw.corr.whole(12,no.cal.obs.sim.stn.12min,258,"tss.mgl","ob.tss.mgl")),
     as_tibble(vald1.dw.corr.whole(06,no.cal.obs.sim.stn.06min,258,"tss.mgl","ob.tss.mgl"))
   )
-  
+
   n<-rbind(
     as_tibble(vald1.dw.corr.whole(180,no.cal.obs.sim.stn.180min,39,"tss.mgl","ob.tss.mgl")),
     as_tibble(vald1.dw.corr.whole(60,no.cal.obs.sim.stn.60min,39,"tss.mgl","ob.tss.mgl")),
@@ -452,16 +452,16 @@ no.cal.tbl.sim.corr.val.d1<- function(
     as_tibble(vald1.dw.corr.whole(12,no.cal.obs.sim.stn.12min,39,"tss.mgl","ob.tss.mgl")),
     as_tibble(vald1.dw.corr.whole(06,no.cal.obs.sim.stn.06min,39,"tss.mgl","ob.tss.mgl"))
   )
-  
+
   dw.results <- as_tibble(rbind(z,x,c,v,b,n))
-  
+
   #Adding to environment
   assign(dw.corr.tbl,dw.results,envir = globalenv())
   #Storing at folder
   #write_csv(dw.results,paste('results/calibration.snt/',{{ver.tim}},'.corr.tbl.val.d1.csv', sep=""))
   #Show results in console
   dw.results
-  
+
 }
 
 #Obtain table of correlations and and store its temporal version
@@ -484,9 +484,9 @@ poll.corr.plot.databy.mhole <- function(
     obs.pollut = ob.cod.mgl,
     sim.pollut = cod.mgl,
     plot.name = paste({{ver.tim}},'cor.obs.stn.06min.png')){
-  
+
   set.seed(123)
-  
+
   no.cal.obs.sim.stn.temp.resl.plot <- grouped_ggscatterstats(
     data             = dplyr::filter({{data}},
                                      manhole.id %in% c("wwtp","258","39")),
@@ -509,17 +509,17 @@ poll.corr.plot.databy.mhole <- function(
     xfill            = 'chocolate4', ## fill for marginals on the x-axis
     yfill            = 'chocolate'## fill for marginals on the y-axis
   )
-  
+
   # ggsave(
   #   filename = here::here("img", "sim.vs.obs","calibration", plot.name),
   #   plot = no.cal.obs.sim.stn.temp.resl.plot,
   #   width = 24,
   #   height = 8,
   #   device = "png")
-  
+
   #Adding to environment
   assign('no.cal.obs.sim.stn.temp.resl.plot',no.cal.obs.sim.stn.temp.resl.plot,envir = globalenv())
-  
+
 }
 
 #  > dygraphs TS sim v.s. obs manholes <------------------------ ================
@@ -529,10 +529,10 @@ poll.corr.plot.databy.mhole <- function(
 #COD WWTP
 dwts.dygraph.manhole.cod <- function(
     data,t.date, poll.sim, poll.obs, poll.sim.ch, poll.obs.ch){
-  
+
   data %>%
     filter(manhole.id == 'wwtp')%>%
-    select(date.time, manhole.id, 
+    select(date.time, manhole.id,
            {{poll.sim}}, {{poll.obs}},
            cod.mn,cod.mx)%>%
     filter(str_detect(date.time,t.date))%>%
@@ -560,10 +560,10 @@ dwts.dygraph.manhole.cod <- function(
 #TSS WWTP
 dwts.dygraph.manhole.tss <- function(
     data,t.date, poll.sim, poll.obs, poll.sim.ch, poll.obs.ch){
-  
+
   data %>%
     filter(manhole.id == 'wwtp')%>%
-    select(date.time, manhole.id, 
+    select(date.time, manhole.id,
            {{poll.sim}}, {{poll.obs}},
            tss.mn,tss.mx)%>%
     filter(str_detect(date.time,t.date))%>%
@@ -602,9 +602,9 @@ val.days.snt <- c("2022-03-22") #Calibration day 0
 #       poll.sim.ch = 'cod.mgl',
 #       poll.obs.ch= 'ob.cod.mgl')%>%
 #   as.list() -> dwplot.list.1.mh
-# 
+#
 # #htmltools::browsable(htmltools::tagList(dwplot.list.1.mh))
-# 
+#
 # #COD 60 min
 # val.days.snt %>%
 #   map(dwts.dygraph.manhole.cod,
@@ -614,9 +614,9 @@ val.days.snt <- c("2022-03-22") #Calibration day 0
 #       poll.sim.ch = 'cod.mgl',
 #       poll.obs.ch= 'ob.cod.mgl')%>%
 #   as.list() -> dwplot.list.2.mh
-# 
+#
 # #htmltools::browsable(htmltools::tagList(dwplot.list.2.mh))
-# 
+#
 # #COD 180 min
 # val.days.snt %>%
 #   map(dwts.dygraph.manhole.cod,
@@ -640,9 +640,9 @@ val.days.snt <- c("2022-03-22") #Calibration day 0
 #       poll.sim.ch = 'tss.mgl',
 #       poll.obs.ch= 'ob.tss.mgl')%>%
 #   as.list() -> dwplot.list.4.mh
-# 
+#
 # #htmltools::browsable(htmltools::tagList(dwplot.list.4.mh))
-# 
+#
 # #TSS 60 min
 # val.days.snt %>%
 #   map(dwts.dygraph.manhole.tss,
@@ -652,9 +652,9 @@ val.days.snt <- c("2022-03-22") #Calibration day 0
 #       poll.sim.ch = 'tss.mgl',
 #       poll.obs.ch= 'ob.tss.mgl')%>%
 #   as.list() -> dwplot.list.5.mh
-# 
+#
 # #htmltools::browsable(htmltools::tagList(dwplot.list.5.mh))
-# 
+#
 # #TSS 180 min
 # val.days.snt %>%
 #   map(dwts.dygraph.manhole.tss,
@@ -664,7 +664,7 @@ val.days.snt <- c("2022-03-22") #Calibration day 0
 #       poll.sim.ch = 'tss.mgl',
 #       poll.obs.ch= 'ob.tss.mgl')%>%
 #   as.list() -> dwplot.list.6.mh
-# 
+#
 # #htmltools::browsable(htmltools::tagList(dwplot.list.6.mh))
 
 
@@ -934,19 +934,19 @@ dt.val
 
 #Tuesday- as calibration & Monday as validation
 obs.sim.stn.06min %>%
-  filter(between(date.time, dt.val[4,1], dt.val[4,2])) %>%
+  filter(between(date.time, dt.val$start[4], dt.val$end[4])) %>%
   .$date.time%>%wday(label=TRUE)
 
 obs.sim.stn.06min %>%
-  filter(between(date.time, dt.val[3,1], dt.val[3,2])) %>%
+  filter(between(date.time, dt.val$start[3], dt.val$end[3])) %>%
   mutate(.,cal.day = wday(.$date.time,label=TRUE)) %>% .[,c('cal.day')]
 
 obs.sim.stn.06min %>%
-  filter(between(date.time, dt.val[4,1], dt.val[4,2])) %>%
+  filter(between(date.time, dt.val$start[4], dt.val$end[4])) %>%
   mutate(.,cal.day = wday(.$date.time,label=TRUE)) %>% .[,c('cal.day')]
 
 obs.sim.stn.06min %>%
-  filter(between(date.time, dt.val[5,1], dt.val[5,2])) %>%
+  filter(between(date.time, dt.val$start[5], dt.val$end[5])) %>%
   mutate(.,cal.day = wday(.$date.time,label=TRUE)) %>% .[,c('cal.day')]
 
 #Correlation for specific spatio-temporal resolutions
@@ -965,7 +965,7 @@ cal.dw.corr.whole <- function(
   
   #Tuesday-Calibration day
   a <- obs.sim.loc.t.resol %>%
-    filter(between(date.time, dt.val[4,1], dt.val[4,2]))%>%
+    filter(between(date.time, dt.val$start[4], dt.val$end[4]))%>%
     filter(manhole.id == mh.id) %>%
     correlation(select =c(obs.pollutat,sim.pollutat)) %>% 
     as_tibble()%>% rename(., r.cal.T=r)
@@ -987,7 +987,7 @@ vald1.dw.corr.whole <- function(
   
   #Monday-Validation day
   b <- obs.sim.loc.t.resol %>%
-    filter(between(date.time, dt.val[3,1], dt.val[3,2]))%>%
+    filter(between(date.time, dt.val$start[3], dt.val$end[3]))%>%
     filter(manhole.id == mh.id) %>%
     correlation(select =c(obs.pollutat,sim.pollutat)) %>%
     as_tibble() %>% rename(., r.val.M=r)

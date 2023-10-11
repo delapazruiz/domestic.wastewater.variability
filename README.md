@@ -1,29 +1,38 @@
+---
+editor_options: 
+  markdown: 
+    wrap: 72
+---
+
 **README. Modeling spatiotemporal domestic wastewater variability:**
-*Implications to measure sanitation efficiency*
+*Implications to measure treatment efficiency*
+
 ================
+
 Néstor DelaPaz-Ruíz, Ellen-Wien Augustijn, Mahdi Farnaghi, Raul
-Zurita-Milla.
+Zurita-Milla. 
 February, 2023
 
-- <a href="#about" id="toc-about">About</a>
-- <a href="#getting-started" id="toc-getting-started">Getting Started</a>
-  - <a href="#pre-requirements"
-    id="toc-pre-requirements">Pre-requirements</a>
-- <a href="#usage" id="toc-usage">Usage</a>
-  - <a href="#build-netlogo-images" id="toc-build-netlogo-images">Build
-    NetLogo images</a>
-  - <a href="#run-netlogo-containers" id="toc-run-netlogo-containers">Run
-    NetLogo containers</a>
-  - <a href="#build-rstudio-image" id="toc-build-rstudio-image">Build
-    RStudio image</a>
-  - <a href="#run-rstudio-container" id="toc-run-rstudio-container">Run
-    RStudio container</a>
-- <a href="#expected-results" id="toc-expected-results">Expected
-  results</a>
-- <a href="#support" id="toc-support">Support</a>
-- <a href="#license" id="toc-license">License</a>
-- <a href="#acknowledgements"
-  id="toc-acknowledgements">Acknowledgements</a>
+-   <a href="#about" id="toc-about">About</a>
+-   <a href="#getting-started" id="toc-getting-started">Getting
+    Started</a>
+    -   <a href="#pre-requirements"
+        id="toc-pre-requirements">Pre-requirements</a>
+-   <a href="#usage" id="toc-usage">Usage</a>
+    -   <a href="#build-netlogo-images" id="toc-build-netlogo-images">Build
+        NetLogo images</a>
+    -   <a href="#run-netlogo-containers" id="toc-run-netlogo-containers">Run
+        NetLogo containers</a>
+    -   <a href="#build-rstudio-image" id="toc-build-rstudio-image">Build
+        RStudio image</a>
+    -   <a href="#run-rstudio-container" id="toc-run-rstudio-container">Run
+        RStudio container</a>
+-   <a href="#expected-results" id="toc-expected-results">Expected
+    results</a>
+-   <a href="#support" id="toc-support">Support</a>
+-   <a href="#license" id="toc-license">License</a>
+-   <a href="#acknowledgements"
+    id="toc-acknowledgements">Acknowledgements</a>
 
 Affiliation: Department of Geo-Information Process (GIP), Faculty of
 Geo-Information Science and Earth Observation (ITC), University of
@@ -50,44 +59,44 @@ You will need the following:
 
 1.  Data:
 
-- Download or copy this repository to the local folder where you plan to
-  execute the code scripts.
+-   Download or copy this repository to the local folder where you plan
+    to execute the code scripts.
 
 2.  Open-source software:
 
-- You have Docker Desktop installed and running in your computer
-  (v.4.16.3 is recommended).See:
-  <https://www.docker.com/products/docker-desktop/>
-- A command-line shell: Git Bash is used for running the commands. See:
-  <https://gitforwindows.org/>
+-   You have Docker Desktop installed and running in your computer
+    (v.4.16.3 is recommended).See:
+    <https://www.docker.com/products/docker-desktop/>
+-   A command-line shell: Git Bash is used for running the commands.
+    See: <https://gitforwindows.org/>
 
 3.  Read the full section of `Usage` before executing code.
 
 4.  NetLogo alternative:
 
-- Before building and running NetLogo images and containers in Docker
-  Desktop consider that you can run the NetLogo models once you install
-  NetLogo 6.1.1. Running NetLogo in Docker Desktop can take a couple of
-  hours. [Link to NetLogo 6.1.1
-  Downloads](https://ccl.northwestern.edu/netlogo/6.1.1/). Running
-  NetLogo with your own NetLogo 6.1.1 installation can take less than 1
-  hour if your computer has multiple processors and good RAM. For this
-  option copy the provided `NetLogo.cfg` file and replace it at the
-  folder: `C:\Program Files\NetLogo 6.1.1\app`. In this way, you are
-  free to use several processors. Please, refer to the following link:
-  [FAQ: How big can my model be? How many turtles, patches, procedures,
-  buttons, and so on can my model
-  contain?](http://ccl.northwestern.edu/netlogo/docs/faq.html#how-big-can-my-model-be-how-many-turtles-patches-procedures-buttons-and-so-on-can-my-model-contain).
-  After the NetLogo installation, make sure to execute the
-  `. ./code/newfiles.txt` in Git Bash and then you can jump to step 3)
-  in the bellow Usage section and run the required 2 simulations.
+-   Before building and running NetLogo images and containers in Docker
+    Desktop consider that you can run the NetLogo models once you
+    install NetLogo 6.1.1. Running NetLogo in Docker Desktop can take a
+    couple of hours. [Link to NetLogo 6.1.1
+    Downloads](https://ccl.northwestern.edu/netlogo/6.1.1/). Running
+    NetLogo with your own NetLogo 6.1.1 installation can take less than
+    1 hour if your computer has multiple processors and good RAM. For
+    this option copy the provided `NetLogo.cfg` file and replace it at
+    the folder: `C:\Program Files\NetLogo 6.1.1\app`. In this way, you
+    are free to use several processors. Please, refer to the following
+    link: [FAQ: How big can my model be? How many turtles, patches,
+    procedures, buttons, and so on can my model
+    contain?](http://ccl.northwestern.edu/netlogo/docs/faq.html#how-big-can-my-model-be-how-many-turtles-patches-procedures-buttons-and-so-on-can-my-model-contain).
+    After the NetLogo installation, make sure to execute the
+    `. ./code/newfiles.txt` in Git Bash and then you can jump to step 3)
+    in the bellow Usage section and run the required 2 simulations.
 
 ## Usage
 
-- Open Git Bash in the folder path of the repository.
+-   Open Git Bash in the folder path of the repository.
 
-- Execute the following command in Git Bash to set up new files to run
-  NetLogo:
+-   Execute the following command in Git Bash to set up new files to run
+    NetLogo:
 
 ``` bash
 . ./code/newfiles.txt
@@ -95,13 +104,13 @@ You will need the following:
 
 ### Build NetLogo images
 
-- Open Docker Desktop and verify the engine is running (green icon at
-  the left-bottom corner).
+-   Open Docker Desktop and verify the engine is running (green icon at
+    the left-bottom corner).
 
-- Execute the below commands in Git Bash to create NetLogo Docker
-  images. Note that the two models must be created and run:
+-   Execute the below commands in Git Bash to create NetLogo Docker
+    images. Note that the two models must be created and run:
 
-  - Model not calibrated, and model calibrated:
+    -   Model not calibrated, and model calibrated:
 
 ``` bash
 docker build -f DockerfileNetlogoNocalibration --build-arg MODEL_NAME=dw.sms.abm.snt.2020.no.cal.val.1.nlogo --build-arg NETLOGO_VERSION=6.1.1 -t dwsmsabmsntnocalibration .
@@ -111,21 +120,22 @@ docker build -f DockerfileNetlogoNocalibration --build-arg MODEL_NAME=dw.sms.abm
 docker build -f DockerfileNetlogo --build-arg MODEL_NAME=dw.sms.abm.snt.2020.cal.val.1.nlogo --build-arg NETLOGO_VERSION=6.1.1 -t dwsmsabmsntresults .
 ```
 
-- Verify that the following images were created. Go to Docker
-  Desktop/images: `dwsmsabmsntnocalibration` & `dwsmsabmsntresults`.
+-   Verify that the following images were created. Go to Docker
+    Desktop/images: `dwsmsabmsntnocalibration` & `dwsmsabmsntresults`.
 
 ### Run NetLogo containers
 
-- Execute the below command in Git Bash to run the XPRA X11 tool.
+-   Execute the below command in Git Bash to run the XPRA X11 tool.
 
 ``` bash
 docker run -d --name x11-bridge -e MODE="tcp" -e XPRA_HTML="yes" -e DISPLAY=:14 -e XPRA_PASSWORD=111 -p 10000:10000 jare/x11-bridge
 ```
 
-- Go to Docker Desktop/containers to verify that the container
-  `x11-bridge` is running.
+-   Go to Docker Desktop/containers to verify that the container
+    `x11-bridge` is running.
 
-- Run the calibrated and no calibrated models with the following steps:
+-   Run the calibrated and no calibrated models with the following
+    steps:
 
 Note that in the two commands bellow (1,7) you have to replace the
 `'my/directory/path/to/results'` to your working directory. For example:
@@ -173,45 +183,46 @@ docker run -it --cpus=12 -d -m 20024M -d --name dwnetlogoresults --volumes-from 
 8)  For the `dwsmsabmsntresults` container, repeat steps from 2 to 6.
 
 You can refer to the following tutorial which shows a video to run
-NetLogo images in Docker:  
+NetLogo images in Docker:\
 [https://forum.comses.net/t/containerizing-a-netlogo-model-gui-version/8236](Containerizing%20a%20NetLogo%20model%20-%20GUI%20version)
 
 ### Build RStudio image
 
-- In Git Bash execute the following command to create the Rstudio image
-  in Docker Desktop.
+-   In Git Bash execute the following command to create the Rstudio
+    image in Docker Desktop.
 
 ``` bash
 docker build -f DockerfileRstudioDWresults -t dwsmsabmsnt2020rproj .
 ```
 
-- Verify that the following image was created. Go to Docker
-  Desktop/images: `dwsmsabmsnt2020rproj`.
+-   Verify that the following image was created. Go to Docker
+    Desktop/images: `dwsmsabmsnt2020rproj`.
 
 ### Run RStudio container
 
-- Execute the below command in Git Bash to run RStudio. Do not forget to
-  replace your own working directory. For example:
-  `'my/directory/path/to/results'` = `C:/Mydocker.dwvariability/results`
+-   Execute the below command in Git Bash to run RStudio. Do not forget
+    to replace your own working directory. For example:
+    `'my/directory/path/to/results'` =
+    `C:/Mydocker.dwvariability/results`
 
 ``` bash
 docker run -d --name dwrstudio -p 8787:8787 -e PASSWORD=mypassword -v 'my/directory/path/to/results':/home/rstudio/results dwsmsabmsnt2020rproj
 ```
 
-- Go to Docker Desktop/containers to verify that the container
-  `dwrstudio` is running. Open the following link in a web browser:
+-   Go to Docker Desktop/containers to verify that the container
+    `dwrstudio` is running. Open the following link in a web browser:
 
 <http://localhost:8787>
 
-- Type the following credentials:  
-  `username:` rstudio  
-  `mypassword:` mypassword
+-   Type the following credentials:\
+    `username:` rstudio\
+    `mypassword:` mypassword
 
-- In the RStudio user interface, go to files and open the
-  `DW_ABM_before_after_calibration_and_validation.Rmd` file. The file
-  content will appear. Press the `Knit` icon.
+-   In the RStudio user interface, go to files and open the
+    `DW_ABM_before_after_calibration_and_validation.Rmd` file. The file
+    content will appear. Press the `Knit` icon.
 
-- The viewer panel shows the results.
+-   The viewer panel shows the results.
 
 ## Expected results
 

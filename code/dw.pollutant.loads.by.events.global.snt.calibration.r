@@ -50,8 +50,8 @@ dw.eventloads.papers <- tibble(
        pee.max = c(842.6,7.9,13), 
        poo.min = c(4599,3333,9),
        poo.max = c(11800,6933,13),
-       kitchen.min = c(1079,235,1.47),
-       kitchen.max = c(273,720,2.94),
+       kitchen.min = c(273,235,1.47),
+       kitchen.max = c(1079,720,2.94),
        shower.min = c(280,119,26),
        shower.max = c(871.3,262,33.7),
        washingmachine.min = c(413,120,31),
@@ -100,10 +100,32 @@ dw.eventloads.young <- dw.eventloads.papers %>%
 # head(wwtp.snt)
 
 manholes.snt<- manholes.snt%>% 
-  filter(event.typ %in% c("pee","poo","washbasin") & Age != "P_0A2")
+  filter(event.typ %in% c("kitchensink","shower") | Age != "P_0A2")
 
 blocks.snt<- blocks.snt%>% 
-  filter(event.typ %in% c("pee","poo","washbasin") & Age != "P_0A2")
+  filter(event.typ %in% c("kitchensink","shower") | Age != "P_0A2")
+
+# Update cheking
+
+# manholes.snt.filter<- manholes.snt%>% 
+#   filter(event.typ %in% c("pee","poo",'washbasin') & Age != "P_0A2")
+# 
+# blocks.snt.filter<- blocks.snt%>% 
+#   filter(event.typ %in% c("pee","poo",'washbasin') & Age != "P_0A2")
+
+# blocks.snt.filter$Age %>%unique() 
+# blocks.snt.filter$event.typ %>%unique() 
+# blocks.snt.filter %>%
+#   filter(Age == 'P_0A2') %>% .$event.typ%>%unique()
+# blocks.snt.filter%>% summary()
+# 
+# 
+# manholes.snt.filter$Age %>%unique() 
+# manholes.snt.filter$event.typ %>%unique() 
+# manholes.snt.filter %>%
+#   filter(Age == 'P_0A2') %>% .$event.typ%>%unique()
+
+
 
 
 #Lists of age groups to apply DW event loads
@@ -121,8 +143,14 @@ p.e.you <- function(pollu,even.typ){
   dw.eventloads.young %>% 
     .[.$dw.var== pollu,c(even.typ)] %>% as.numeric()}
 
-p.e.adu('tss.mg/l',"shower.max")
-p.e.you('tss.mg/l',"shower.min")
+# p.e.adu('tss.mg/l',"shower.max")
+# p.e.you('tss.mg/l',"shower.min")
+# 
+# p.e.adu('tss.mg/l',"kitchen.max")
+# p.e.you('tss.mg/l',"kitchen.min")
+# 
+# p.e.adu('cod.mg/l',"kitchen.max")
+# p.e.you('cod.mg/l',"kitchen.min")
 
 # Apply sampled loads to DW events  ----
 # respective uniform distributions
@@ -301,23 +329,58 @@ b.k.snt.washbasin.you <- blocks.snt %>%
 # b.k.snt.pee.you$lts %>% unique()
 # b.k.snt.pee.you %>% View()
 
+# b.k.snt.kitchen.you %>% select(13:last_col())
+# b.k.snt.kitchen.adu %>% select(13:last_col())
+# 
+# b.k.snt.kitchen.adu$cod.mgl %>% is.na() %>% summary()
+# b.k.snt.kitchen.you$tss.mgl %>% is.na() %>% summary()
+
 #rbin: Combining DW pollutants DF ----
 
 blocks.snt.pol <- rbind(
-  b.k.snt.kitchen.adu,b.k.snt.kitchen.you,b.k.snt.pee.adu,b.k.snt.pee.you,
-      b.k.snt.poo.adu,b.k.snt.poo.you,b.k.snt.shower.adu,b.k.snt.shower.you,
-      b.k.snt.washbasin.adu,b.k.snt.washbasin.you,b.k.snt.washingmachine.adu,
-      b.k.snt.washingmachine.you)
+  b.k.snt.kitchen.adu,
+  b.k.snt.kitchen.you,
+  b.k.snt.pee.adu,
+  b.k.snt.pee.you,
+  b.k.snt.poo.adu,
+  b.k.snt.poo.you,
+  b.k.snt.shower.adu,
+  b.k.snt.shower.you,
+  b.k.snt.washbasin.adu,
+  b.k.snt.washbasin.you,
+  b.k.snt.washingmachine.adu,
+  b.k.snt.washingmachine.you)
 
 #inner_join: Pollutants into manholes ----
-manholes.snt.pol <- left_join(manholes.snt, 
-                               blocks.snt.pol,
-                              c("exp","run","seed","wwp.id")#
-                                )
-#manholes.snt.pol %>% summary()
+manholes.snt.pol <- dplyr::left_join(manholes.snt,
+                              blocks.snt.pol,
+                              by= c('exp','run','seed','wwp.id') #,'day.n','ind.id','event.typ'
+                              )
 
-manholes.snt.pol %>% colnames()
-blocks.snt.pol %>% colnames()
+# manholes.snt.pol%>% select(last_col(2):last_col(1)) %>% summary()
+# manholes.snt.pol$cod.mgl %>% is.na() %>% summary()
+# manholes.snt.pol$tss.mgl %>% is.na() %>% summary()
+# manholes.snt.pol %>% colnames()
+# 
+# manholes.snt.pol$wwp.id %>% unique()%>% as.data.frame()%>% nrow()
+# manholes.snt$wwp.id %>% unique()%>% as.data.frame()%>% nrow()
+# 
+# manholes.snt.pol$day.n.x %>% unique()%>% as.data.frame()%>% nrow()
+# manholes.snt$day.n %>% unique()%>% as.data.frame()%>% nrow()
+# 
+# blocks.snt.pol$day.n %>% unique()%>% as.data.frame()%>% nrow()
+# blocks.snt$day.n %>% unique()%>% as.data.frame()%>% nrow()
+# 
+# blocks.snt.pol%>% filter(is.na(cod.mgl))%>% .$event.typ %>% unique()
+# blocks.snt.pol%>% filter(is.na(cod.mgl))%>% .$day.n %>% unique()
+# blocks.snt.pol%>% filter(is.na(cod.mgl))%>% .$run %>% unique()
+# blocks.snt.pol%>% filter(is.na(cod.mgl))%>% .$Age %>% unique()
+# 
+# blocks.snt$wwp.id %>% unique()%>% as.data.frame()%>% nrow()
+# blocks.snt.pol$wwp.id %>% unique()%>% as.data.frame()%>% nrow()
+# blocks.snt.pol%>% select(last_col(2):last_col()) %>% summary()
+# blocks.snt.pol$cod.mgl %>% is.na() %>% summary()
+# blocks.snt.pol$tss.mgl %>% is.na() %>% summary()
 
 #Colnames to be removed
 mh.drops <- c("ind.id.y","date.time.y","day.n.y","event.typ.y","CVEGEO.x","Sex.y",
@@ -361,14 +424,6 @@ remove(
   dw.eventloads.adults,
   dw.eventloads.young,
   dw.eventloads.fw)
-
-
-
-
-
-
-
-
 
 
 

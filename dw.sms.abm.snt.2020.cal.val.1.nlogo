@@ -783,16 +783,18 @@ let prob.pee.times.aday.weekend [ .01 .03 .05 .10 .19 .20 .18 .12 .08 .04 ]
   ; report the first item of the pair selected using; the second item (i.e., `last p`) as the weight
 
 let pee.hour [
-    0 1 2 3 4 5
+    0
+    1 2 3 4 5
     6 7 8 9 10
     11 12 13 14 15
     16 17 18 19 20
     21 22 23 ]
  let prob.pee.hour [
-    .02 .02 .02 .02 .02 .05
-    .05 .05 .03 .03 .03
-    .04 .04 .04 .04 .04
-    .04 .04 .05 .07 .07
+    .02
+    .02 .02 .02 .02 .05
+    .05 .05 .03 .03 .04
+    .05 .04 .03 .03 .03
+    .04 .05 .06 .06 .07
     .07 .06 .06
  ]
   let prob.pee.hour.weekend [
@@ -846,22 +848,24 @@ to poo
   ; 1) number of poo events (from 2 to 11 times a day)
   ; 2) in specific hours of the day (from 0 to 23 hours)
   let poo.times.aday [1 2 3]; people poo a minimum of 0 and max of 3 times a day
-  let prob.poo.times.aday [.6 .25 .15]; probabilities of each time to happen
+  let prob.poo.times.aday [.7 .25 .05]; probabilities of each time to happen
   let prob.poo.times.aday.weekend [.6 .25 .15]
   ; report the first item of the pair selected using; the second item (i.e., `last p`) as the weight
 
 let poo.hour [
-    0 1 2 3 4 5
+    0
+    1 2 3 4 5
     6 7 8 9 10
     11 12 13 14 15
     16 17 18 19 20
     21 22 23 ]
 
  let prob.poo.hour [
-    .0 .0 .0 .0 .0 .0
-    .035 .07 .21 .22 .065
-    .08 .085 .065 .05 .06
-    .01 .01 .01 .01 .01
+    .0
+    .0 .0 .0 .0 .0
+    .01 .05 .21 .22 .11
+    .085 .07 .075 .06 .07
+    .005 .005 .005 .005 .01
     .01 .0 .0 ]
   let prob.poo.hour.weekend [
     .0 .0 .0 .0 .0 .0
@@ -931,7 +935,7 @@ let kitchensink.hour [
 
   let prob.kitchensink.hour [
     0	0	0	0	0	0.03 ; 0 to 5 hors
-    0.05	0.12	0.08	0.05	0	0 ; 6 to 11 hours
+    0.05	0.09	0.07	0.07	0.03	0 ; 6 to 11 hours
     0.06	0.13	0.15	0.09	0.03	0 ; 12 to 17 hours
     0	0.07	0.1	0.04	0	0 ; 18 to 23 hours
   ]
@@ -1079,8 +1083,8 @@ to shower
 
 let shower.times.aday [ 0 1 2]; people shower mimum of 12 and max of 5 uses a day
 
-let prob.shower.times.aday [ 0.2 0.7 0.1 ]; probabilities of each time to happen
-let prob.shower.times.aday.weekend [0.2  0.7 0.1 ]
+let prob.shower.times.aday [ 0.7 0.2 0.1 ]; probabilities of each time to happen
+let prob.shower.times.aday.weekend [0.7  0.2 0.1 ]
  ; report the first item of the pair selected using; the second item (i.e., `last p`) as the weight
 
 let shower.hour [
@@ -1091,9 +1095,9 @@ let shower.hour [
 
   let prob.shower.hour.work [
     0	0	0	0	0	0.05 ; 0 to 5 hors
-    0.05	0.3	0.20	0.15	.05	0 ; 6 to 11 hours
+    0.06	0.13	0.10	0.15	0.03	0.01 ; 6 to 11 hours
     0.0	0.0	0.0	0.0	0.0	0 ; 12 to 17 hours
-    0	0.0	0.10	0.10	0	0 ; 18 to 23 hours
+    0.7	0.10	0.10	0.10	0	0 ; 18 to 23 hours
   ]
   let prob.shower.hour.weekend.work [
   0	0	0	0	0	0 ; 0 to 5 hors
@@ -1665,8 +1669,8 @@ GRAPHICS-WINDOW
 699
 0
 550
-0
-0
+1
+1
 1
 ticks
 30.0

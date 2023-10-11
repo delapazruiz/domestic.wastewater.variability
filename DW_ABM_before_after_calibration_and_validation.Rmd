@@ -1,14 +1,15 @@
 ---
-title: "**REPRODUCIBLE RESULTS. Modeling spatiotemporal domestic wastewater variability**"  
-subtitle: "**Implications to measure sanitation efficiency**"
+title: '**REPRODUCIBLE RESULTS. Modeling spatiotemporal domestic wastewater variability**'
 author:
-  - name: "*Néstor DelaPaz-Ruíz, Ellen-Wien Augustijn, Mahdi Farnaghi, Raul Zurita-Milla*"
-    affiliation: Department of Geo-Information Process (GIP),  Faculty of Geo-Information Science and Earth Observation (ITC),  University of Twente,  Drienerlolaan 5, 7522 NB Enschede, The Netherlands
-
-date: "2022-09-16"
+- name: "*Néstor DelaPaz-Ruíz, Ellen-Wien Augustijn, Mahdi Farnaghi, Raul Zurita-Milla*"
+  affiliation: "Department of Geo-Information Processing (GIP),  Faculty of Geo-Information
+    Science and Earth Observation (ITC),  University of Twente,  Drienerlolaan 5,
+    7522 NB Enschede, The Netherlands"
+date: "2023-10-11"
 output:
   html_document:
-    toc: true
+    toc: yes
+subtitle: '**Implications to measure treatment efficiency**'
 ---
 
 ```{r setup, include=FALSE}
@@ -23,12 +24,15 @@ library(reshape2)
 library(tidyr)
 library(purrr)
 library(Rcpp)
+library(dygraphs)
+library(xts)
+library(kableExtra)
 
 #Setup code required
 ver.tim <- 0
  
-  source("code/dw.abm.events.into.r.cal.val.1.r")
-  source("code/dw.abm.events.into.r.no.cal.r")
+  #source("code/dw.abm.events.into.r.cal.val.1.r")
+  #source("code/dw.abm.events.into.r.no.cal.r")
   source("code/dw.abm.validation.snt.before.after.cal.R")
 
 ```
@@ -239,8 +243,7 @@ no.cal.tbl.sim.corr.cal.T(paste('corr.tbl.cal.d0',{{ver.tim}}))%>%
          res.min	 == 60) %>%
   select(res.min,manhole.id,Parameter1,Parameter2,r.cal.T,p,n_Obs) %>%
   rename(., r.correlation = r.cal.T, 
-         WWTP_Catchment = manhole.id)%>%
-  kable()
+         WWTP_Catchment = manhole.id) %>%  kable(format = "simple")
  
 # |
 #            res.min	 == 30 |
@@ -257,8 +260,7 @@ no.cal.tbl.sim.corr.cal.T(paste('corr.tbl.cal.d0',{{ver.tim}}))%>%
          res.min	 == 60) %>%
   select(res.min,manhole.id,Parameter1,Parameter2,r.cal.T,p,n_Obs) %>%
   rename(., r.correlation = r.cal.T, 
-         WWTP_Catchment = manhole.id)%>%
-  kable()
+         WWTP_Catchment = manhole.id) %>%  kable(format = "simple")
 
  # |
  #           res.min	 == 30 |
@@ -433,7 +435,7 @@ tbl.sim.corr.cal.T(paste('corr.tbl.cal.d0',{{ver.tim}}))%>%
   select(res.min,manhole.id,Parameter1,Parameter2,r.cal.T,p,n_Obs) %>%
   rename(., r.correlation = r.cal.T, 
          WWTP_Catchment = manhole.id)%>%
-  kable()
+  kable(format = "simple")
 
  # |
  #           res.min	 == 30 |
@@ -450,7 +452,7 @@ tbl.sim.corr.cal.T(paste('corr.tbl.cal.d0',{{ver.tim}}))%>%
   select(res.min,manhole.id,Parameter1,Parameter2,r.cal.T,p,n_Obs) %>%
   rename(., r.correlation = r.cal.T, 
          WWTP_Catchment = manhole.id)%>%
-  kable()
+  kable(format = "simple")
 
  # |
  #           res.min	 == 30 |

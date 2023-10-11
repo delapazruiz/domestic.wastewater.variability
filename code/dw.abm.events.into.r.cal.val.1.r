@@ -93,10 +93,14 @@ washbasin.snt <- read_csv(
 # washbasin.snt[duplicated(washbasin.snt),]
 
 #Checking sensitivity analysis variables
-manholes.snt$run %>% unique()
-manholes.snt$exp %>% unique()
-manholes.snt$seed %>% unique()
-manholes.snt$manhole.id %>% unique()
+# manholes.snt$run %>% unique()
+# manholes.snt$exp %>% unique()
+# manholes.snt$seed %>% unique()
+# manholes.snt$manhole.id %>% unique()
+# 
+# pee.snt$run %>% unique()
+# pee.snt$exp %>% unique()
+# pee.snt$seed %>% unique()
 
 #Datetime format for time-series data analysis
 manholes.snt$date.time <- parse_date_time(
@@ -243,6 +247,11 @@ blocks.snt<- rbind(pee.snt,poo.snt,kitchen.snt,
 blocks.snt
 manholes.snt
 
+# colnames(blocks.snt)
+# colnames(manholes.snt)
+# blocks.snt$event.typ %>%unique()
+# manholes.snt$event.typ %>%unique()
+
 remove(
   pee.snt,
   poo.snt,
@@ -258,12 +267,23 @@ ver.tim <- Sys.time() %>% gsub(":",".",.) %>%
 #Execute parametrization
 source("code/dw.pollutant.loads.by.events.global.snt.calibration.r")
 
+#Check parametrization
+# colnames(blocks.snt.pol)
+# colnames(manholes.snt.pol)
+# blocks.snt.pol$event.typ %>%unique()
+# manholes.snt.pol$event.typ %>%unique()
+# blocks.snt.pol$Age %>%unique()
+# manholes.snt.pol$Age %>%unique()
+
 #remove un-used var
 remove(dt.val,blocks.snt,manholes.snt,indiv_mipfp.id)
 
 # Results from DW parametrization
 # blocks.snt.pol
 # manholes.snt.pol
+# 
+# blocks.snt.pol$event.typ |> unique()
+# manholes.snt.pol$event.typ |> unique()
 # 
 # summary(blocks.snt.pol)
 # summary(manholes.snt.pol)
