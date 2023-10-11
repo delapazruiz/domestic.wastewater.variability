@@ -1,5 +1,5 @@
 **README. Modeling spatiotemporal domestic wastewater variability:**
-*Implications to measure sanitation efficiency*
+*Implications to measure treatment efficiency*
 ================
 Néstor DelaPaz-Ruíz, Ellen-Wien Augustijn, Mahdi Farnaghi, Raul
 Zurita-Milla. 
@@ -26,7 +26,7 @@ February, 2023
 -   <a href="#acknowledgements"
     id="toc-acknowledgements">Acknowledgements</a>
 
-Affiliation: Department of Geo-Information Process (GIP), Faculty of
+Affiliation: Department of Geo-Information Processing (GIP), Faculty of
 Geo-Information Science and Earth Observation (ITC), University of
 Twente, Drienerlolaan 5, 7522 NB Enschede, The Netherlands
 
