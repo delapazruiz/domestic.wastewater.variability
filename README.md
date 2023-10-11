@@ -1,14 +1,6 @@
----
-editor_options: 
-  markdown: 
-    wrap: 72
----
-
 **README. Modeling spatiotemporal domestic wastewater variability:**
-*Implications to measure treatment efficiency*
-
+*Implications to measure sanitation efficiency*
 ================
-
 Néstor DelaPaz-Ruíz, Ellen-Wien Augustijn, Mahdi Farnaghi, Raul
 Zurita-Milla. 
 February, 2023
