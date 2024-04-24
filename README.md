@@ -1,7 +1,7 @@
 **README. Modeling spatiotemporal domestic wastewater variability:**
 *Implications to measure treatment efficiency*
 ================
-NC)stor DelaPaz-RuC-z, Ellen-Wien Augustijn, Mahdi Farnaghi, Raul
+Néstor DelaPaz-Ruíz, Ellen-Wien Augustijn, Mahdi Farnaghi, Raul
 Zurita-Milla. 
 February, 2023
 
