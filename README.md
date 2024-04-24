@@ -1,4 +1,9 @@
-**README. Modeling spatiotemporal domestic wastewater variability:** *Implications to measure treatment efficiency* ================ Néstor DelaPaz-Ruíz, Ellen-Wien Augustijn, Mahdi Farnaghi, Raul Zurita-Milla. February, 2023
+**README. Modeling spatiotemporal domestic wastewater variability:**
+*Implications to measure treatment efficiency*
+================
+NC)stor DelaPaz-RuC-z, Ellen-Wien Augustijn, Mahdi Farnaghi, Raul
+Zurita-Milla. 
+February, 2023
 
 -   <a href="#about" id="toc-about">About</a>
 -   <a href="#getting-started" id="toc-getting-started">Getting Started</a>
@@ -97,7 +102,7 @@ Note that in the two commands bellow (1,7) you have to replace the `'my/director
 docker run -it -d -m 20024M -d --name dwnetlogonocalibration --volumes-from x11-bridge -v 'my/directory/path/to/results':/home/results dwsmsabmsntnocalibration
 ```
 
-2)  Once the Docker container is running, open your web browser (e.g. Chrome, Firefox) and paste the following URL in the search bar: <http://localhost:10000/index.html?encoding=rgb32&password=111>
+2)  Once the Docker container is running, open your web browser (e.g.B Chrome, Firefox) and paste the following URL in the search bar: <http://localhost:10000/index.html?encoding=rgb32&password=111>
 
 You should see the NetLogo model.
 
@@ -198,4 +203,4 @@ This project is licensed under the MIT license. Feel free to edit and distribute
 
 ## Acknowledgements
 
-The authors wish to express their gratitude for the valuable support in the local implementation of this study, without which this research cannot be consolidated: Carlos Pailles, Ana Velasco, Lucía Guardamino, Rodrigo Tapia-McClung, Araceli Chávez, Diana Ramos, Daniela Goméz, José Luis Pérez, Natalia Volkow, and the anonymous facilitators from Mexico City, citizens of Tepeji del Río, and the INEGI department of microdata. Scholarship funder: CONACYT-Alianza FiiDEM.
+The authors wish to express their gratitude for the valuable support in the local implementation of this study, without which this research cannot be consolidated: Carlos Pailles, Ana Velasco, LucC-a Guardamino, Rodrigo Tapia-McClung, Araceli ChC!vez, Diana Ramos, Daniela GomC)z, JosC) Luis PC)rez, Natalia Volkow, and the anonymous facilitators from Mexico City, citizens of Tepeji del RC-o, and the INEGI department of microdata. Scholarship funder: CONACYT-Alianza FiiDEM.
