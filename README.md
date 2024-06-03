@@ -54,6 +54,9 @@ You will need the following:
 
 -   Before building and running NetLogo images and containers in Docker Desktop consider that you can run the NetLogo models once you install NetLogo 6.1.1. Running NetLogo in Docker Desktop can take a couple of hours. [Link to NetLogo 6.1.1 Downloads](https://ccl.northwestern.edu/netlogo/6.1.1/). Running NetLogo with your own NetLogo 6.1.1 installation can take less than 1 hour if your computer has multiple processors and good RAM. For this option copy the provided `NetLogo.cfg` file and replace it at the folder: `C:\Program Files\NetLogo 6.1.1\app`. In this way, you are free to use several processors. Please, refer to the following link: [FAQ: How big can my model be? How many turtles, patches, procedures, buttons, and so on can my model contain?](http://ccl.northwestern.edu/netlogo/docs/faq.html#how-big-can-my-model-be-how-many-turtles-patches-procedures-buttons-and-so-on-can-my-model-contain). After the NetLogo installation, make sure to execute the `. ./code/newfiles.txt` in Git Bash and then you can jump to step 3) in the bellow Usage section and run the required 2 simulations.
 
+5.  `RStudio 2023.12.1` and `R version 4.3.1` are used in this repository. For the R library requirements explore the `renv.lock` file.
+
+
 ## Usage
 
 -   Open Git Bash in the folder path of the repository.
@@ -153,7 +156,32 @@ docker run -d --name dwrstudio -p 8787:8787 -e PASSWORD=mypassword -v 'my/direct
     `username:` rstudio\
     `mypassword:` mypassword
 
--   In the RStudio user interface, go to files and open the `DW_ABM_before_after_calibration_and_validation.Rmd` file. The file content will appear. Press the `Knit` icon.
+-   In the RStudio user interface, go to files and open the `R Project file . Rproj`. 
+
+R Project file:
+``` bash
+domestic.wastewater.variability.Rproj
+```
+
+-   Make sure that 'renv' is installed and loaded.
+
+``` bash
+install.packages("renv")
+library(renv)
+```
+
+-   Run the following in the R console to install the required libraries.
+
+``` bash
+renv::restore()
+```
+
+-   Open the R markdown file and  Press the `Knit` icon to generate the report: (time: around 25 min)
+
+``` bash
+DW_ABM_before_after_calibration_and_validation.Rmd
+```
+
 
 -   The viewer panel shows the results.
 
@@ -185,7 +213,27 @@ dw.sms.abm.snt.2020.cal.val.1.nlogo
 dw.sms.abm.snt.2020.no.cal.val.1.nlogo
 ```
 
-3) Open Rstudio and knit the following file: (time: around 25 min)
+3) Open the Rstudio project file and verify the library requirements.
+
+R Project file:
+``` bash
+domestic.wastewater.variability.Rproj
+```
+
+Make sure that 'renv' is installed and loaded.
+
+``` bash
+install.packages("renv")
+library(renv)
+```
+
+Run the following in the R console to install the required libraries.
+
+``` bash
+renv::restore()
+```
+
+4) Open the R markdown file and knit it to generate the report: (time: around 25 min)
 
 ``` bash
 DW_ABM_before_after_calibration_and_validation.Rmd
