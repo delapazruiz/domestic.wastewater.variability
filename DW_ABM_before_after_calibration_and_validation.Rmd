@@ -15,8 +15,9 @@ subtitle: '**Implications to measure treatment efficiency**'
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE, warning = FALSE, message = FALSE)
 
-#Loading any pre-requirements
-#Libraries 
+#Libraries
+renv::restore()
+
 library(knitr)
 library(ggplot2)
 library(dplyr)
@@ -31,9 +32,9 @@ library(kableExtra)
 #Setup code required
 ver.tim <- 0
  
-  source("code/dw.abm.events.into.r.cal.val.1.r")
-  source("code/dw.abm.events.into.r.no.cal.r")
-  source("code/dw.abm.validation.snt.before.after.cal.R")
+  source("code/dw.abm.events.into.r.cal.val.1.r", local = knitr::knit_global())
+  source("code/dw.abm.events.into.r.no.cal.r", local = knitr::knit_global())
+  source("code/dw.abm.validation.snt.before.after.cal.R", local = knitr::knit_global())
 
 ```
 

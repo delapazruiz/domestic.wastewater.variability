@@ -2407,12 +2407,12 @@ false
 Polygon -7500403 true true 270 75 225 30 30 225 75 270
 Polygon -7500403 true true 30 75 75 30 270 225 225 270
 @#$#@#$#@
-NetLogo 6.1.1
+NetLogo 6.3.0
 @#$#@#$#@
 @#$#@#$#@
 @#$#@#$#@
 <experiments>
-  <experiment name="cal.val.1" repetitions="50" sequentialRunOrder="false" runMetricsEveryStep="false">
+  <experiment name="cal.val.1" repetitions="25" sequentialRunOrder="false" runMetricsEveryStep="false">
     <setup>setup</setup>
     <go>go-until</go>
     <timeLimit steps="1"/>

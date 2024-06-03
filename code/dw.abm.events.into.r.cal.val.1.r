@@ -1,8 +1,8 @@
 # Calibration and Validation
 
 options(scipen = 999)
-#library(rJava)
-#library(RNetLogo)
+
+#Libraries
 library(lubridate)
 library(ggplot2)
 library(dplyr)
@@ -17,7 +17,6 @@ library(tidyr)
 library(readr)
 library(tibble)
 library(RcppRoll)
-
 
 #Before running Netlogo calibration-validation file
 #Make sure you have at least 20 GB of free RAM to rung the simulation
