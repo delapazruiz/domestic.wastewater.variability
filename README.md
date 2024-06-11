@@ -1,23 +1,25 @@
-**README. Modeling spatiotemporal domestic wastewater variability:**
-*Implications to measure treatment efficiency*
-================
-[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.10242566.svg)](https://doi.org/10.5281/zenodo.10242566) 
+---
+---
+---
 
-Néstor DelaPaz-Ruíz, Ellen-Wien Augustijn, Mahdi Farnaghi, Raul
-Zurita-Milla. 
-February, 2023
+**README. Modeling spatiotemporal domestic wastewater variability:** 
+*Implications to measure treatment efficiency* 
+================ 
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.10242566.svg)](https://doi.org/10.5281/zenodo.10242566)
+
+Néstor DelaPaz-Ruíz, Ellen-Wien Augustijn, Mahdi Farnaghi, Raul Zurita-Milla. February, 2023
 
 -   <a href="#about" id="toc-about">About</a>
 -   <a href="#getting-started" id="toc-getting-started">Getting Started</a>
     -   <a href="#pre-requirements"
         id="toc-pre-requirements">Pre-requirements</a>
--   <a href="#usage" id="toc-usage">Usage</a>
+-   <a href="#quick-reproducibility" id="toc-quick-reproducibility">Quick reproducibility</a>
+-   <a href="#long-term-reproducibility" id="toc-long-term-reproducibility">Long-term reproducibility</a>
     -   <a href="#build-netlogo-images" id="toc-build-netlogo-images">Build NetLogo images</a>
     -   <a href="#run-netlogo-containers" id="toc-run-netlogo-containers">Run NetLogo containers</a>
     -   <a href="#build-rstudio-image" id="toc-build-rstudio-image">Build RStudio image</a>
     -   <a href="#run-rstudio-container" id="toc-run-rstudio-container">Run RStudio container</a>
 -   <a href="#expected-results" id="toc-expected-results">Expected results</a>
--   <a href="#quick-reproducibility" id="toc-expected-results">Quick reproducibility</a>
 -   <a href="#support" id="toc-support">Support</a>
 -   <a href="#license" id="toc-license">License</a>
 -   <a href="#acknowledgements"
@@ -39,27 +41,107 @@ Note: If you found this repository useful and would like to support reproducibil
 
 ### Pre-requirements
 
-You will need the following:
+Used computational environment:
+
+```         
+Platform: x86_64-w64-mingw32/x64 (64-bit) 
+Running under: Windows 11 x64 (build 22631)
+Processor:  Intel(R) Core(TM) i7-10750H CPU @ 2.60GHz   2.59 GHz
+Logical processors: 12 
+Installed RAM   32.0 GB (31.6 GB usable)
+System type 64-bit operating system, x64-based processor
+
+Docker Desktop v.4.16.3
+
+R version 4.3.1 (2023-06-16 ucrt)
+RStudio 2023.12.1
+
+NetLogo 6.1.1
+```
 
 1.  Data:
 
--   Download or copy this repository to the local folder where you plan to execute the code scripts.
+-   Download or copy this repository to a local folder .
 
 2.  Open-source software:
 
--   You have Docker Desktop installed and running in your computer (v.4.16.3 is recommended).See: <https://www.docker.com/products/docker-desktop/>
--   A command-line shell: Git Bash is used for running the commands. See: <https://gitforwindows.org/>
+Quick reproducibility (requires NetLogo/Rstudio experience):
 
-3.  Read the full section of `Usage` before executing code.
+-   Install and run Git Bash. See: <https://gitforwindows.org/>
+-   Install and run NetLogo. See: <https://ccl.northwestern.edu/netlogo/6.1.1/>
+-   Install Rstudio. See: <https://dailies.rstudio.com/version/2023.12.1+402/>
+-   NetLogo note: For this option copy the provided `NetLogo.cfg` file and replace it at the folder: `C:\Program Files\NetLogo 6.1.1\app`. In this way, you are free to use several processors. Please, refer to the following link: [FAQ: How big can my model be? How many turtles, patches, procedures, buttons, and so on can my model contain?](http://ccl.northwestern.edu/netlogo/docs/faq.html#how-big-can-my-model-be-how-many-turtles-patches-procedures-buttons-and-so-on-can-my-model-contain). After the NetLogo installation, make sure to execute the `. ./code/newfiles.txt` in Git Bash.,
 
-4.  NetLogo alternative:
+Long-term reproducibility (requires some familiarity with Docker):
 
--   Before building and running NetLogo images and containers in Docker Desktop consider that you can run the NetLogo models once you install NetLogo 6.1.1. Running NetLogo in Docker Desktop can take a couple of hours. [Link to NetLogo 6.1.1 Downloads](https://ccl.northwestern.edu/netlogo/6.1.1/). Running NetLogo with your own NetLogo 6.1.1 installation can take less than 1 hour if your computer has multiple processors and good RAM. For this option copy the provided `NetLogo.cfg` file and replace it at the folder: `C:\Program Files\NetLogo 6.1.1\app`. In this way, you are free to use several processors. Please, refer to the following link: [FAQ: How big can my model be? How many turtles, patches, procedures, buttons, and so on can my model contain?](http://ccl.northwestern.edu/netlogo/docs/faq.html#how-big-can-my-model-be-how-many-turtles-patches-procedures-buttons-and-so-on-can-my-model-contain). After the NetLogo installation, make sure to execute the `. ./code/newfiles.txt` in Git Bash and then you can jump to step 3) in the bellow Usage section and run the required 2 simulations.
+-   Install and run Git Bash. See: <https://gitforwindows.org/>
+-   Install and run Docker Desktop. See: <https://www.docker.com/products/docker-desktop/>
+-   NetLogo note: Before building and running NetLogo images and containers in Docker Desktop consider that you can run the NetLogo models once you install NetLogo 6.1.1. Running NetLogo in Docker Desktop can take a couple of hours. Running NetLogo with your own NetLogo 6.1.1 installation can take around 25 minutes.
 
-5.  `RStudio 2023.12.1` and `R version 4.3.1` are used in this repository. For the R library requirements explore the `renv.lock` file.
+4.  Libraries and extensions:
 
+-   NetLogo: The first time running the Netlogo file, you will get a windows to install the time extension. Follow the instructions to install it.
+-   Rstudio: The first time that you open the R project execute the `renv::restore()` in the R console to load the required libraries. You can explore the library requirements in the `renv.lock` file.
 
-## Usage
+## Quick reproducibility
+
+This section is for Windows users familiar with NetLogo, Rstudio, and Git bash. Mac or Linux users can also try to reproduce results. Jump to the long-term reproducibility (usage) section, which uses Docker to reproduce results as the alternative for non-experienced users.
+
+Steps for a quick reproduction:
+
+1)  In a new folder, execute the following commands in git bash:
+
+``` bash
+git clone https://github.com/delapazruiz/domestic.wastewater.variability.git
+```
+
+``` bash
+. ./code/newfiles.txt
+```
+
+2)  Open the NetLogo (v. 6.1.1) files and run the experiments. In Tools/BehaviorSpace, change to 25 runs and select processors to run each experiment. (time: around 25 min each)
+
+``` bash
+dw.sms.abm.snt.2020.cal.val.1.nlogo
+```
+
+``` bash
+dw.sms.abm.snt.2020.no.cal.val.1.nlogo
+```
+
+3)  Open the Rstudio project file and verify the library requirements.
+
+R Project file:
+
+``` bash
+domestic.wastewater.variability.Rproj
+```
+
+Make sure that 'renv' is installed and loaded.
+
+``` bash
+install.packages("renv")
+```
+
+Load the 'renv' library.
+
+``` bash
+library(renv)
+```
+
+Run the following in the R console to install the required libraries.
+
+``` bash
+renv::restore()
+```
+
+4)  Open the R markdown file and knit it to generate the report: (time: around 25 min)
+
+``` bash
+DW_ABM_before_after_calibration_and_validation.Rmd
+```
+
+## Long term reproducibility
 
 -   Open Git Bash in the folder path of the repository.
 
@@ -144,10 +226,10 @@ docker build -f DockerfileRstudioDWresults -t dwsmsabmsnt2020rproj .
 
 ### Run RStudio container
 
--   Execute the below command in Git Bash to run RStudio. Do not forget to replace your own working directory. For example: `'my/directory/path/to/results'` = `C:/Mydocker.dwvariability/results`
+-   Execute the below command in Git Bash to run RStudio. Do not forget to replace your own working directory. For example: `'my/directory/path/to/results'` = `C:/Mydocker.dwvariability/results/calibration.snt`
 
 ``` bash
-docker run -d --name dwrstudio -p 8787:8787 -e PASSWORD=mypassword -v 'my/directory/path/to/results':/home/rstudio/results dwsmsabmsnt2020rproj
+docker run -d --name dwrstudio -p 8787:8787 -e PASSWORD=mypassword -v 'my/directory/path/to/results':/home/rstudio/results/calibration.snt dwsmsabmsnt2020rproj
 ```
 
 -   Go to Docker Desktop/containers to verify that the container `dwrstudio` is running. Open the following link in a web browser:
@@ -158,88 +240,41 @@ docker run -d --name dwrstudio -p 8787:8787 -e PASSWORD=mypassword -v 'my/direct
     `username:` rstudio\
     `mypassword:` mypassword
 
--   In the RStudio user interface, go to files and open the `R Project file . Rproj`. 
+-   In the RStudio user interface, go to files and open the R project file:
 
-R Project file:
 ``` bash
 domestic.wastewater.variability.Rproj
 ```
 
--   Make sure that 'renv' is installed and loaded.
+-   Make sure that 'renv' is installed and loaded. Execute in the R console:
 
 ``` bash
 install.packages("renv")
+```
+
+-   Load renv:
+
+``` bash
 library(renv)
 ```
 
--   Run the following in the R console to install the required libraries.
+-   Run the following in the R console to install and load the required libraries.
 
 ``` bash
 renv::restore()
 ```
 
--   Open the R markdown file and  Press the `Knit` icon to generate the report: (time: around 25 min)
+-   In Files, Home, open the R markdown file and Press the `Knit` icon to generate the report: (processing time: around 5 min). Click 'Yes' to any 'Install or Update' emergent message.
 
 ``` bash
 DW_ABM_before_after_calibration_and_validation.Rmd
 ```
-
 
 -   The viewer panel shows the results.
 
 ## Expected results
 
 Download the repository and open the file: `DW_ABM_before_after_calibration_and_validation.html` to see expected results after pressing `Knit` in RStudio.
-
-## Quick reproducibility
-
-This section indicates the steps for a quick reproduction without Docker and half of the simulation and processing time. Experience in NetLogo and R is expected.
-
-1) In a new folder, execute the following commands in git bash:
-
-``` bash
-git clone https://github.com/delapazruiz/domestic.wastewater.variability.git
-```
-
-``` bash
-. ./code/newfiles.txt
-```
-
-2) Open the NetLogo(6.1.1) files and run the experiments. In Tools/BehaviorSpace, change to 25 runs and select 1 ro 2 processors to run each experiment. (time: around 25 min each)
-
-``` bash
-dw.sms.abm.snt.2020.cal.val.1.nlogo
-```
-
-``` bash
-dw.sms.abm.snt.2020.no.cal.val.1.nlogo
-```
-
-3) Open the Rstudio project file and verify the library requirements.
-
-R Project file:
-``` bash
-domestic.wastewater.variability.Rproj
-```
-
-Make sure that 'renv' is installed and loaded.
-
-``` bash
-install.packages("renv")
-library(renv)
-```
-
-Run the following in the R console to install the required libraries.
-
-``` bash
-renv::restore()
-```
-
-4) Open the R markdown file and knit it to generate the report: (time: around 25 min)
-
-``` bash
-DW_ABM_before_after_calibration_and_validation.Rmd
-```
 
 ## Support
 
