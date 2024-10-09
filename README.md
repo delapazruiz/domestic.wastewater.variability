@@ -5,7 +5,10 @@
 **README. Modeling spatiotemporal domestic wastewater variability:** 
 *Implications to measure treatment efficiency* 
 ================ 
-[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.10242566.svg)](https://doi.org/10.5281/zenodo.10242566)
+
+Repository: [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.10242566.svg)](https://doi.org/10.5281/zenodo.10242566)
+
+Manuscript: https://doi.org/10.1016/j.jenvman.2023.119680
 
 Néstor DelaPaz-Ruíz, Ellen-Wien Augustijn, Mahdi Farnaghi, Raul Zurita-Milla. February, 2023
 
