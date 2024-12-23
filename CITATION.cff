@@ -1,0 +1,51 @@
+# This CITATION.cff file was generated with cffinit.
+# Visit https://bit.ly/cffinit to generate yours today!
+
+cff-version: 1.2.0
+title: >-
+  Software. Reproducible results. Modeling spatiotemporal 
+  domestic wastewater variability: Implications to measure 
+  treatment efficiency
+message: >-
+  If you use this software, please cite it using the
+  metadata from this file.
+type: software
+authors:
+  - given-names: Néstor
+    family-names: DelaPaz-Ruíz
+    email: n.delapazruiz@utwente.nl
+    affiliation: 'ITC, University of Twente, Enschede, NL'
+    orcid: 'https://orcid.org/0000-0002-8941-4677'
+  - given-names: Ellen-Wien
+    family-names: Augustijn
+    affiliation: 'ITC, University of Twente, Enschede, NL'
+    orcid: 'https://orcid.org/0000-0002-3389-7585'
+  - orcid: 'https://orcid.org/0000-0002-3071-5563'
+    affiliation: 'ITC, University of Twente, Enschede, NL'
+    given-names: Mahdi
+    family-names: Farnaghi
+  - orcid: 'https://orcid.org/0000-0002-1769-6310'
+    affiliation: 'ITC, University of Twente, Enschede, NL'
+    given-names: Raul
+    family-names: Zurita-Milla
+identifiers:
+  - type: doi
+    value: 10.5281/zenodo.10242567
+    description: Software repository in Zenodo
+repository-code: >-
+  https://github.com/delapazruiz/domestic.wastewater.variability
+abstract: >-
+  This repository provides access to the materials
+  (code-data), software-environments (NetLogo, Rstudio,
+  Docker containers), and the steps for reproducing the
+  results from the publication: Modeling spatiotemporal 
+  domestic wastewater variability: Implications to measure 
+  treatment efficiency
+keywords:
+  - R
+  - NetLogo
+  - ABM
+  - Wastewater
+  - Modeling
+  - Spatiotemporal
+license: CC-BY-4.0
