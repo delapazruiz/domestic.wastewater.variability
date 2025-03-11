@@ -1,14 +1,11 @@
----
----
----
 
-**README. Modeling spatiotemporal domestic wastewater variability:** 
+**Reproducible results. Modeling spatiotemporal domestic wastewater variability:** 
 *Implications to measure treatment efficiency* 
 ================ 
 
-Repository: [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.10242566.svg)](https://doi.org/10.5281/zenodo.10242566)
+Journal article: <https://doi.org/10.1016/j.jenvman.2023.119680>
 
-Manuscript: https://doi.org/10.1016/j.jenvman.2023.119680
+Repository: [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.10242566.svg)](https://doi.org/10.5281/zenodo.10242566)
 
 Néstor DelaPaz-Ruíz, Ellen-Wien Augustijn, Mahdi Farnaghi, Raul Zurita-Milla. February, 2023
 
@@ -31,8 +28,6 @@ Néstor DelaPaz-Ruíz, Ellen-Wien Augustijn, Mahdi Farnaghi, Raul Zurita-Milla. 
 Affiliation: Department of Geo-Information Processing (GIP), Faculty of Geo-Information Science and Earth Observation (ITC), University of Twente, Drienerlolaan 5, 7522 NB Enschede, The Netherlands
 
 ## About
-
-Journal article: <https://doi.org/10.1016/j.jenvman.2023.119680>
 
 This repository provides access to the materials (code-data), software-environments (NetLogo, Rstudio, Docker containers), and the steps for reproducing the results from the publication: *Modeling spatiotemporal domestic wastewater variability: Implications to measure sanitation efficiency*.
 
