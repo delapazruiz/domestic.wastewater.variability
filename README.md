@@ -94,7 +94,7 @@ git clone https://github.com/delapazruiz/domestic.wastewater.variability.git
 ```
 
 ``` bash
-cd domestic.wastewater.variability.git
+cd domestic.wastewater.variability
 ```
 
 ``` bash
