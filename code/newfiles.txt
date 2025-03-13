@@ -1,4 +1,6 @@
-rm -r results/calibration.snt
+rm -rf results/calibration.snt
+
+mkdir results/
 mkdir results/calibration.snt
 
 touch results/calibration.snt/manholes.snt.cal1.csv
